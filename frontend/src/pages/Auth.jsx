@@ -83,7 +83,7 @@ const Auth = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
             <AnimatePresence mode="wait">
               {!isLogin && (
                 <motion.div
@@ -93,7 +93,7 @@ const Auth = () => {
                   exit={{ opacity: 0, height: 0 }}
                   className="space-y-2"
                 >
-                  <label className="text-sm font-medium text-foreground/70 ml-1">Full Name</label>
+                  <label className="block text-sm font-bold text-foreground/70 ml-1 font-sans mb-1.5">Full Name</label>
                   <div className="relative">
                     <input
                       type="text"
@@ -109,7 +109,7 @@ const Auth = () => {
             </AnimatePresence>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground/70 ml-1 font-sans">Email Address</label>
+              <label className="block text-sm font-bold text-foreground/70 ml-1 font-sans mb-1.5">Email Address</label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" size={20} />
                 <input
@@ -124,7 +124,7 @@ const Auth = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground/70 ml-1 font-sans">Password</label>
+              <label className="block text-sm font-bold text-foreground/70 ml-1 font-sans mb-1.5">Password</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" size={20} />
                 <input
