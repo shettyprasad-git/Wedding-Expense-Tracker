@@ -5,7 +5,7 @@ const expenseSchema = new mongoose.Schema({
   event: { 
     type: String, 
     required: true, 
-    enum: ['engagement', 'mehndi', 'marriage', 'dinner'] 
+    enum: ['engagement', 'mehndi', 'marriage', 'dinner', 'haldi'] 
   },
   name: { type: String, required: true },
   category: { 

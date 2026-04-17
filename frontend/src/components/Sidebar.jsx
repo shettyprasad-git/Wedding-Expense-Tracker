@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
-import { LayoutDashboard, Heart, Sparkles, Church, Utensils, X, User, HelpCircle } from 'lucide-react';
+import { LayoutDashboard, Heart, Sparkles, Sun, Church, Utensils, X, User, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -9,6 +9,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { title: 'Engagement', path: '/event/engagement', icon: Heart },
     { title: 'Mehndi', path: '/event/mehndi', icon: Sparkles },
+    { title: 'Haldi', path: '/event/haldi', icon: Sun },
     { title: 'Marriage', path: '/event/marriage', icon: Church },
     { title: 'Dinner', path: '/event/dinner', icon: Utensils },
     { title: 'My Profile', path: '/profile', icon: User },

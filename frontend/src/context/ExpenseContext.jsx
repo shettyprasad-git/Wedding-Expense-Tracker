@@ -82,7 +82,7 @@ export const ExpenseProvider = ({ children }) => {
   }, [expenses, dateRange, globalCategory]);
 
   const totals = useMemo(() => {
-    const events = ['engagement', 'mehndi', 'marriage', 'dinner'];
+    const events = ['engagement', 'mehndi', 'haldi', 'marriage', 'dinner'];
     const initialTotals = events.reduce((acc, s) => ({ ...acc, [s]: 0 }), { GrandTotal: 0 });
     
     return filteredExpenses.reduce((acc, exp) => {

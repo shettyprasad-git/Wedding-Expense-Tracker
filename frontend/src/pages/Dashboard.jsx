@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useExpense } from '../context/ExpenseContext';
 import { useAuth } from '../context/AuthContext';
 import { 
-  Heart, Sparkles, Church, Utensils, 
+  Heart, Sparkles, Sun, Church, Utensils, 
   TrendingUp, IndianRupee, PieChart, 
   ChevronRight, Calendar, ArrowUpRight,
-  Edit3
+  Edit3, Target
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -24,6 +24,7 @@ const Dashboard = () => {
   const events = [
     { title: 'Engagement', path: '/event/engagement', icon: Heart, color: 'from-pink-500 to-rose-500', amount: totals.engagement || 0, budget: user?.budgets?.Engagement || 0 },
     { title: 'Mehndi', path: '/event/mehndi', icon: Sparkles, color: 'from-amber-400 to-orange-500', amount: totals.mehndi || 0, budget: user?.budgets?.Mehndi || 0 },
+    { title: 'Haldi', path: '/event/haldi', icon: Sun, color: 'from-yellow-400 to-amber-500', amount: totals.haldi || 0, budget: user?.budgets?.Haldi || 0 },
     { title: 'Marriage', path: '/event/marriage', icon: Church, color: 'from-purple-600 to-indigo-600', amount: totals.marriage || 0, budget: user?.budgets?.Marriage || 0 },
     { title: 'Dinner', path: '/event/dinner', icon: Utensils, color: 'from-emerald-400 to-teal-500', amount: totals.dinner || 0, budget: user?.budgets?.Dinner || 0 },
   ];

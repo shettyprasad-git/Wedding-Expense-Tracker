@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     Mehndi: { type: Number, default: 0 },
     Marriage: { type: Number, default: 0 },
     Dinner: { type: Number, default: 0 },
+    Haldi: { type: Number, default: 0 },
     GrandTotal: { type: Number, default: 0 }
   },
   phone: { type: String, default: '' },

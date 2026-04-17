@@ -51,6 +51,7 @@ const App = () => {
             {/* Dedicated Ceremony Routes */}
             <Route path="/event/engagement" element={<ProtectedRoute><EventPage eventType="engagement" /></ProtectedRoute>} />
             <Route path="/event/mehndi" element={<ProtectedRoute><EventPage eventType="mehndi" /></ProtectedRoute>} />
+            <Route path="/event/haldi" element={<ProtectedRoute><EventPage eventType="haldi" /></ProtectedRoute>} />
             <Route path="/event/marriage" element={<ProtectedRoute><EventPage eventType="marriage" /></ProtectedRoute>} />
             <Route path="/event/dinner" element={<ProtectedRoute><EventPage eventType="dinner" /></ProtectedRoute>} />
             
