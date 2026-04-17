@@ -114,7 +114,8 @@ const SectionPage = ({ section }) => {
       </div>
 
       <div className="glass-card border border-primary/5 shadow-2xl relative overflow-hidden">
-        <div className="overflow-x-auto no-scrollbar">
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto no-scrollbar">
           <table className="w-full text-left min-w-[600px] md:min-w-full">
             <thead>
               <tr className="bg-primary/5 border-b border-primary/10">
@@ -150,11 +151,63 @@ const SectionPage = ({ section }) => {
                     </td>
                   </motion.tr>
                 )) : (
-                  <tr><td colSpan="5" className="px-8 py-20 text-center text-primary/20 italic font-bold">No items found.</td></tr>
+                  <tr><td colSpan="5" className="px-8 py-20 text-center text-primary/20 italic font-bold text-sm">No items found.</td></tr>
                 )}
               </AnimatePresence>
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="md:hidden divide-y divide-primary/5 bg-white/30 backdrop-blur-sm">
+          <AnimatePresence>
+            {filteredExpenses.length > 0 ? filteredExpenses.map((exp) => (
+              <motion.div 
+                key={exp._id} 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                className="p-6 space-y-4 relative"
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <p className="text-lg font-black text-foreground">{exp.title}</p>
+                    <span className="inline-block bg-primary/10 px-3 py-1 rounded-lg text-[10px] font-black text-primary uppercase mt-1">
+                      {exp.category}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-black text-primary-dark">₹{exp.amount.toLocaleString()}</p>
+                    <div className="flex items-center justify-end gap-1 mt-1 text-[10px] font-bold text-foreground/40 italic">
+                      <Calendar size={12} /> {new Date(exp.date).toLocaleDateString()}
+                    </div>
+                  </div>
+                </div>
+                
+                {exp.notes && (
+                  <div className="bg-primary/5 rounded-xl p-3 border border-primary/5">
+                    <p className="text-[11px] text-primary/60 font-medium leading-relaxed italic">"{exp.notes}"</p>
+                  </div>
+                )}
+
+                <div className="flex gap-2 pt-2">
+                  <button 
+                    onClick={() => { setEditingExpense(exp); setIsFormOpen(true); }} 
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-white/50 border border-primary/10 rounded-xl text-primary font-black text-xs hover:bg-white transition-colors"
+                  >
+                    <Edit2 size={14} /> Edit
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(exp._id)} 
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-red-50/50 border border-red-100 rounded-xl text-red-400 font-black text-xs hover:bg-red-50 transition-colors"
+                  >
+                    <Trash2 size={14} /> Delete
+                  </button>
+                </div>
+              </motion.div>
+            )) : (
+              <div className="p-10 text-center text-primary/20 italic font-bold text-sm">No items found.</div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
