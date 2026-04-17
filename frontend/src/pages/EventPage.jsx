@@ -7,7 +7,7 @@ import {
   IndianRupee, Tag, Calendar, AlignLeft,
   ChevronRight, MoreVertical, Search,
   Filter, DownloadCloud, AlertCircle,
-  Target, TrendingDown
+  Target, TrendingDown, Wallet
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -37,6 +37,8 @@ const EventPage = ({ eventType: propEventType }) => {
   const budgetKey = eventType ? eventType.charAt(0).toUpperCase() + eventType.slice(1).toLowerCase() : null;
   const ceremonyBudget = user?.budgets?.[budgetKey] || 0;
   const isOverBudget = ceremonyBudget > 0 && total > ceremonyBudget;
+  const remainingBudget = ceremonyBudget - total;
+  const isRemainingPositive = remainingBudget >= 0;
 
   useEffect(() => {
     fetchEventExpenses(eventType);
@@ -71,7 +73,7 @@ const EventPage = ({ eventType: propEventType }) => {
   return (
     <div className="space-y-10">
       {/* Ceremony Header */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+      <div className="flex flex-col gap-8">
         <div className="space-y-4">
           <button 
             onClick={() => navigate('/dashboard')}
@@ -95,45 +97,59 @@ const EventPage = ({ eventType: propEventType }) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-           <div className="bg-white/40 backdrop-blur-3xl border border-white/60 p-6 px-8 rounded-[2rem] shadow-xl flex items-center gap-6">
-              <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
-                <IndianRupee size={24} />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-primary/30 uppercase tracking-widest leading-none mb-1">Total Ceremony Spend</p>
-                <h2 className="text-3xl font-black text-foreground tracking-tighter italic leading-none">₹{total.toLocaleString()}</h2>
-              </div>
-           </div>
-
-           <div className={`bg-white/40 backdrop-blur-3xl border ${isOverBudget ? 'border-red-500/20 shadow-red-500/10' : 'border-white/60'} p-6 px-8 rounded-[2rem] shadow-xl flex items-center gap-6 group relative overflow-hidden`}>
-              {isOverBudget && <div className="absolute top-0 left-0 w-full h-1 bg-red-500/40" />}
-              <div className={`w-12 h-12 ${isOverBudget ? 'bg-red-500/10 text-red-500' : 'bg-secondary/10 text-secondary'} rounded-2xl flex items-center justify-center`}>
-                <Target size={24} />
-              </div>
-              <div className="flex-1">
-                <p className="text-[10px] font-black text-primary/30 uppercase tracking-widest leading-none mb-1">Ceremony Budget</p>
-                <div className="flex items-center gap-3">
-                  <h2 className={`text-3xl font-black ${isOverBudget ? 'text-red-600' : 'text-foreground'} tracking-tighter italic leading-none`}>
-                    ₹{ceremonyBudget.toLocaleString()}
-                  </h2>
-                  <button 
-                    onClick={() => setIsBudgetModalOpen(true)}
-                    className="p-2 bg-primary/5 rounded-xl text-primary opacity-0 group-hover:opacity-100 transition-all hover:bg-primary hover:text-white"
-                  >
-                    <Edit3 size={14} />
-                  </button>
+        {/* Financial Summary Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* 1. Ceremony Budget */}
+            <div className={`auth-glass p-6 md:p-8 rounded-[2.5rem] border ${isOverBudget ? 'border-red-500/20' : 'border-white/60'} shadow-xl flex items-center gap-6 group relative overflow-hidden transition-all h-[110px]`}>
+                <div className={`w-12 h-12 ${isOverBudget ? 'bg-red-500/10 text-red-500' : 'bg-primary/10 text-primary'} rounded-2xl flex items-center justify-center transition-colors`}>
+                    <Target size={24} />
                 </div>
-              </div>
+                <div className="flex-1">
+                    <p className="text-[10px] font-black text-primary/40 uppercase tracking-widest leading-none mb-1.5 italic">Ceremony Budget</p>
+                    <div className="flex items-center gap-2">
+                        <h2 className={`text-2xl font-black ${isOverBudget ? 'text-red-500' : 'text-foreground'} tracking-tighter italic leading-none`}>₹{ceremonyBudget.toLocaleString()}</h2>
+                        <button 
+                            onClick={() => setIsBudgetModalOpen(true)}
+                            className="p-1.5 bg-primary/5 rounded-lg text-primary opacity-0 group-hover:opacity-100 transition-all hover:bg-primary hover:text-white"
+                        >
+                            <Edit3 size={12} />
+                        </button>
+                    </div>
+                </div>
             </div>
-           
-           <button 
-             onClick={handleAddNew}
-             className="btn-primary h-[88px] px-10 rounded-[2rem] shadow-2xl shadow-primary/30 flex flex-col items-center justify-center gap-1 group"
-           >
-             <Plus size={28} className="group-hover:rotate-90 transition-transform duration-500" />
-             <span className="text-[10px] uppercase font-black tracking-widest">Add Item</span>
-           </button>
+
+            {/* 2. Total Ceremony Spend */}
+            <div className="auth-glass p-6 md:p-8 rounded-[2.5rem] border-white/60 shadow-xl flex items-center gap-6 h-[110px]">
+                <div className="w-12 h-12 bg-secondary/10 rounded-2xl flex items-center justify-center text-secondary">
+                    <TrendingDown size={24} />
+                </div>
+                <div>
+                    <p className="text-[10px] font-black text-primary/40 uppercase tracking-widest leading-none mb-1.5 italic">Total Spent</p>
+                    <h2 className="text-2xl font-black text-foreground tracking-tighter italic leading-none">₹{total.toLocaleString()}</h2>
+                </div>
+            </div>
+
+            {/* 3. Remaining Balance */}
+            <div className="auth-glass p-6 md:p-8 rounded-[2.5rem] border-white/60 shadow-xl flex items-center gap-6 h-[110px]">
+                <div className={`w-12 h-12 ${isRemainingPositive ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'} rounded-2xl flex items-center justify-center transition-colors`}>
+                    <Wallet size={24} />
+                </div>
+                <div>
+                    <p className="text-[10px] font-black text-primary/40 uppercase tracking-widest leading-none mb-1.5 italic">Remaining</p>
+                    <h2 className={`text-2xl font-black ${isRemainingPositive ? 'text-emerald-600' : 'text-red-600'} tracking-tighter italic leading-none`}>
+                        {isRemainingPositive ? `₹${remainingBudget.toLocaleString()}` : `-₹${Math.abs(remainingBudget).toLocaleString()}`}
+                    </h2>
+                </div>
+            </div>
+
+            {/* 4. Add Item Action */}
+            <button 
+                onClick={handleAddNew}
+                className="btn-primary h-[110px] rounded-[2.5rem] shadow-2xl shadow-primary/30 flex flex-col items-center justify-center gap-1 group w-full"
+            >
+                <Plus size={24} className="group-hover:rotate-90 transition-transform duration-500" />
+                <span className="text-[10px] uppercase font-black tracking-widest">Add Item</span>
+            </button>
         </div>
       </div>
 
