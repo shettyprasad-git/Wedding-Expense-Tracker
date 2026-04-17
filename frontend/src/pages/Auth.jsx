@@ -25,7 +25,7 @@ const Auth = () => {
       if (isLogin) {
         await login(formData.email, formData.password);
       } else {
-        await signup(formData.name, formData.email, formData.password);
+        await signup(formData);
       }
       navigate('/');
     } catch (err) {
