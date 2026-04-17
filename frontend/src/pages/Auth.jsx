@@ -87,6 +87,7 @@ const Auth = () => {
             <AnimatePresence mode="wait">
               {!isLogin && (
                 <motion.div
+                  key="signup-name"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
@@ -146,15 +147,34 @@ const Auth = () => {
                 {error}
               </motion.div>
             )}
-          <p>
-            {isLogin ? "New to Wedding Tracker?" : "Already prepared?"}{' '}
-            <Link 
-              to={isLogin ? '/signup' : '/login'} 
-              className="text-primary font-black hover:text-primary-dark transition-colors"
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="btn-primary w-full py-4 text-lg"
             >
-              {isLogin ? 'Sign Up Now' : 'Sign In Here'}
-            </Link>
-          </p>
+              {isLoading ? (
+                <Loader2 className="animate-spin" size={24} />
+              ) : (
+                <>
+                  {isLogin ? 'Sign In' : 'Create Account'}
+                  <ArrowRight size={20} />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-10 text-center">
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="group text-foreground/60 hover:text-primary transition-colors duration-200 text-sm font-sans"
+            >
+              {isLogin ? "New to Wedding Tracker?" : "Already prepared?"}{' '}
+              <span className="font-bold text-primary group-hover:underline decoration-2">
+                {isLogin ? 'Sign Up Now' : 'Login Here'}
+              </span>
+            </button>
+          </div>
         </div>
       </motion.div>
     </div>
