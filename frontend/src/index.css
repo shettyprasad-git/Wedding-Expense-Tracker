@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  background-color: #fdf8ff;
+  color: #2d1b4d;
+  font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  @apply bg-soft-gradient bg-fixed text-foreground;
+}
+
+.glass-card {
+  @apply bg-white/70 backdrop-blur-xl border border-white/40 rounded-[2rem] shadow-2xl;
+}
+
+.auth-glass {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(157, 118, 193, 0.2);
+}
+
+.btn-primary {
+  @apply bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-2xl transition-all duration-300 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98];
+}
+
+.input-field {
+  @apply bg-white/80 border border-primary/20 rounded-2xl px-5 py-3 text-foreground placeholder:text-primary/40 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-sm;
+}
+
+.sidebar-link-active {
+  @apply bg-primary text-white shadow-lg shadow-primary/30 scale-[1.05];
+}
+
+/* Custom animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-primary-light/10;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/30 rounded-full hover:bg-primary/50 transition-colors;
+}
