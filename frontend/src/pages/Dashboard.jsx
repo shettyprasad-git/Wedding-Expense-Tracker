@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const Dashboard = () => {
-  const { totals } = useExpense();
+  const { totals, categoryBreakdown } = useExpense();
   const { user } = useAuth();
   const navigate = useNavigate();
 
