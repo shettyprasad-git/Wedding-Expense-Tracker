@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const res = await api.get('/auth/user');
+        // This now includes budgets, phone, role, profileImage from backend
         setUser(res.data);
       } catch (err) {
         localStorage.removeItem('token');
@@ -31,6 +32,8 @@ export const AuthProvider = ({ children }) => {
     const res = await api.post('/auth/signup', userData);
     localStorage.setItem('token', res.data.token);
     setUser(res.data.user);
+    // Refresh to get full schema including budgets/role etc
+    await loadUser();
     return res.data;
   };
 
@@ -38,12 +41,26 @@ export const AuthProvider = ({ children }) => {
     const res = await api.post('/auth/login', { email, password });
     localStorage.setItem('token', res.data.token);
     setUser(res.data.user);
+    // Refresh to get full schema
+    await loadUser();
     return res.data;
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
+  };
+
+  const updateProfile = async (profileData) => {
+    try {
+      const res = await api.put('/auth/profile', profileData);
+      // Backend returns full user object or profile fields
+      setUser(prev => ({ ...prev, ...res.data }));
+      return res.data;
+    } catch (err) {
+      console.error('❌ Update Profile Error:', err);
+      throw err;
+    }
   };
 
   const updateBudgets = async (budgetData) => {
@@ -58,7 +75,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signup, login, logout, updateBudgets, refreshUser: loadUser }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      signup, 
+      login, 
+      logout, 
+      updateProfile, 
+      updateBudgets, 
+      refreshUser: loadUser 
+    }}>
       {children}
     </AuthContext.Provider>
   );

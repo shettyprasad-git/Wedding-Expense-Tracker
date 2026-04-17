@@ -1,124 +1,98 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, IndianRupee, Target, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '../context/AuthContext';
+import { X, Target, Save, IndianRupee, Heart, Sparkles, Church, Utensils } from 'lucide-react';
 
-const BudgetModal = ({ isOpen, onClose }) => {
-  const { user, updateBudgets } = useAuth();
-  const [formData, setFormData] = useState({
+const BudgetModal = ({ isOpen, onClose, onSave, currentBudgets }) => {
+  const [budgets, setBudgets] = useState({
     Engagement: 0,
     Mehndi: 0,
     Marriage: 0,
-    Dinner: 0,
-    GrandTotal: 0
+    Dinner: 0
   });
-  const [isSaving, setIsSaving] = useState(false);
+
+  const categories = [
+    { name: 'Engagement', icon: Heart, color: 'text-pink-500' },
+    { name: 'Mehndi', icon: Sparkles, color: 'text-amber-500' },
+    { name: 'Marriage', icon: Church, color: 'text-purple-600' },
+    { name: 'Dinner', icon: Utensils, color: 'text-emerald-500' }
+  ];
 
   useEffect(() => {
-    if (user?.budgets) {
-      setFormData({
-        Engagement: user.budgets.Engagement || 0,
-        Mehndi: user.budgets.Mehndi || 0,
-        Marriage: user.budgets.Marriage || 0,
-        Dinner: user.budgets.Dinner || 0,
-        GrandTotal: user.budgets.GrandTotal || 0
-      });
+    if (currentBudgets) {
+      setBudgets(currentBudgets);
     }
-  }, [user, isOpen]);
+  }, [currentBudgets, isOpen]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: parseInt(e.target.value) || 0 });
+    setBudgets({
+      ...budgets,
+      [e.target.name]: Number(e.target.value)
+    });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSaving(true);
-    try {
-      await updateBudgets(formData);
-      onClose();
-    } catch (err) {
-      alert('Failed to update budgets');
-    } finally {
-      setIsSaving(false);
-    }
+  const handleSave = () => {
+    onSave(budgets);
+    onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        initial={{ opacity: 0, scale: 0.9, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="auth-glass w-full max-w-lg p-8 md:p-10 rounded-[2.5rem] relative shadow-2xl overflow-hidden"
+        className="auth-glass w-full max-w-2xl p-10 md:p-14 rounded-[3.5rem] relative shadow-2xl overflow-hidden border-white/60"
       >
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary/30 to-transparent" />
+        <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl -translate-y-12 translate-x-12" />
         
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-10">
           <div>
-            <h2 className="text-2xl md:text-3xl font-black text-foreground tracking-tight">Finance Center</h2>
-            <p className="text-[10px] text-secondary font-black uppercase tracking-widest mt-1 italic">Set your savings targets</p>
+            <h2 className="text-4xl font-black text-foreground tracking-tighter uppercase italic mb-2">Budget Target Hub</h2>
+            <p className="text-[10px] font-black text-primary/40 uppercase tracking-[0.3em] italic">Set ceremony investment thresholds</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-colors text-foreground/40">
-            <X size={24} />
+          <button onClick={onClose} className="p-3 hover:bg-white/20 rounded-full transition-colors text-foreground/40 group">
+             <X size={28} className="group-hover:rotate-90 transition-transform duration-500" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {['Engagement', 'Mehndi', 'Marriage', 'Dinner'].map((section) => (
-              <div key={section} className="flex flex-col">
-                <label className="block text-[10px] font-black text-primary/70 ml-2 mb-2 uppercase tracking-[0.2em]">{section} Budget</label>
-                <div className="relative group">
-                  <IndianRupee className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={16} />
-                  <input
-                    type="number"
-                    name={section}
-                    value={formData[section]}
-                    onChange={handleChange}
-                    className="input-field pl-12 h-12 text-sm"
-                    required
-                  />
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+          {categories.map((cat) => (
+            <div key={cat.name} className="flex flex-col bg-white/40 p-6 rounded-[2rem] border border-white/60 hover:bg-white transition-all shadow-inner group">
+              <div className="flex items-center gap-3 mb-4">
+                <cat.icon className={`${cat.color} group-hover:scale-110 transition-transform`} size={18} />
+                <label className="text-[11px] font-black uppercase tracking-widest text-primary italic leading-none">{cat.name} Portfolio</label>
               </div>
-            ))}
-          </div>
-
-          <div className="flex flex-col bg-secondary/5 p-6 rounded-[2rem] border border-secondary/10">
-            <label className="block text-[10px] font-black text-secondary/70 ml-2 mb-2 uppercase tracking-[0.2em]">Grand Wedding Target</label>
-            <div className="relative group">
-              <Target className="absolute left-5 top-1/2 -translate-y-1/2 text-secondary/30 group-focus-within:text-secondary transition-colors" size={20} />
-              <input
-                type="number"
-                name="GrandTotal"
-                value={formData.GrandTotal}
-                onChange={handleChange}
-                className="input-field pl-14 h-14 text-lg font-black"
-                placeholder="Global Budget"
-                required
-              />
+              <div className="relative">
+                <IndianRupee className="absolute left-0 top-1/2 -translate-y-1/2 text-primary/20" size={24} />
+                <input
+                  type="number"
+                  name={cat.name}
+                  value={budgets[cat.name]}
+                  onChange={handleChange}
+                  className="w-full bg-transparent pl-10 pr-4 py-2 text-3xl font-black text-foreground tracking-tighter focus:outline-none placeholder:text-primary/10 italic"
+                  placeholder="0"
+                />
+              </div>
             </div>
-            <p className="mt-3 text-[9px] text-secondary/40 font-black uppercase tracking-widest italic text-center">Calculated total from sections: ₹{(formData.Engagement + formData.Mehndi + formData.Marriage + formData.Dinner).toLocaleString()}</p>
-          </div>
+          ))}
+        </div>
 
-          <div className="flex gap-4 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-6 py-4 rounded-2xl border border-primary/10 text-primary font-black uppercase text-xs tracking-widest hover:bg-primary/5 transition-all"
-            >
-              Close
-            </button>
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="flex-[2] flex items-center justify-center gap-3 py-4 bg-secondary text-white rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-secondary-dark transition-all shadow-xl shadow-secondary/20"
-            >
-              {isSaving ? <ShieldCheck className="animate-pulse" /> : <Save size={20} />}
-              <span>{isSaving ? 'Saving...' : 'Update Targets'}</span>
-            </button>
-          </div>
-        </form>
+        <div className="flex gap-4">
+          <button 
+            onClick={onClose}
+            className="flex-1 px-8 py-5 rounded-2xl border border-primary/10 text-primary font-black uppercase text-xs tracking-widest hover:bg-primary/5 transition-all"
+          >
+            Cancel
+          </button>
+          <button 
+            onClick={handleSave}
+            className="flex-[2] btn-primary shadow-2xl shadow-primary/30"
+          >
+            <Save size={20} className="stroke-3" />
+            <span className="tracking-[0.2em] uppercase font-black text-xs">Commit New Targets</span>
+          </button>
+        </div>
       </motion.div>
     </div>
   );

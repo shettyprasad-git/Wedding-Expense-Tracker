@@ -4,8 +4,13 @@ import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, Heart, ArrowRight, Loader2, User as UserIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
+const Auth = ({ mode }) => {
+  const [isLogin, setIsLogin] = useState(mode === 'login');
+  
+  React.useEffect(() => {
+    setIsLogin(mode === 'login');
+  }, [mode]);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',

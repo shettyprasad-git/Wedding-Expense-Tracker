@@ -12,6 +12,13 @@ const userSchema = new mongoose.Schema({
     Dinner: { type: Number, default: 0 },
     GrandTotal: { type: Number, default: 0 }
   },
+  phone: { type: String, default: '' },
+  role: { 
+    type: String, 
+    enum: ['Brother', 'Sister', 'Planner', 'Other', ''], 
+    default: 'Planner' 
+  },
+  profileImage: { type: String, default: '' },
   createdAt: { type: Date, default: Date.now }
 });
 

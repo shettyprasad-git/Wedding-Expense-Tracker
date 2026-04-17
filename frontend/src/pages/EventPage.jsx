@@ -1,195 +1,264 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Edit2, Trash2, ArrowLeft, LogOut, IndianRupee, Tag, Info, Calendar } from 'lucide-react';
-import { useExpenses } from '../context/ExpenseContext';
-import { useAuth } from '../context/AuthContext';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useExpense } from '../context/ExpenseContext';
 import ExpenseForm from '../components/ExpenseForm';
+import { 
+  Plus, ArrowLeft, Trash2, Edit3, 
+  IndianRupee, Tag, Calendar, AlignLeft,
+  ChevronRight, MoreVertical, Search,
+  Filter, DownloadCloud, AlertCircle
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const EventPage = ({ eventType }) => {
-  const { expenses, loading, addExpense, updateExpense, deleteExpense, totals, fetchExpenses } = useExpenses();
-  const { logout } = useAuth();
+const EventPage = ({ eventType: propEventType }) => {
+  const { type: paramEventType } = useParams();
+  const eventType = propEventType || paramEventType;
   const navigate = useNavigate();
+  const { expenses, deleteExpense, addExpense, updateExpense, fetchEventExpenses } = useExpense();
   
-  const [searchTerm, setSearchTerm] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  // Strictly filter items for this specific ceremony
-  const eventExpenses = expenses.filter(exp => exp.event?.toLowerCase() === eventType.toLowerCase());
-
+  const eventExpenses = expenses.filter(exp => exp.event === eventType);
   const filteredExpenses = eventExpenses.filter(exp => 
-    exp.name.toLowerCase().includes(searchTerm.toLowerCase())
+    exp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    exp.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleFormSubmit = async (formData) => {
-    try {
-      if (editingExpense) {
-        await updateExpense(editingExpense._id, { ...formData, event: eventType });
-      } else {
-        await addExpense({ ...formData, event: eventType });
-      }
-      setIsFormOpen(false);
-      setEditingExpense(null);
-    } catch (err) {
-      alert('Failed to save expense');
-    }
+  const total = eventExpenses.reduce((sum, exp) => sum + exp.price, 0);
+
+  useEffect(() => {
+    fetchEventExpenses(eventType);
+  }, [eventType]);
+
+  const handleEdit = (expense) => {
+    setEditingExpense(expense);
+    setIsFormOpen(true);
+  };
+
+  const handleAddNew = () => {
+    setEditingExpense(null);
+    setIsFormOpen(true);
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this expense?')) {
-      try {
-        await deleteExpense(id);
-      } catch (err) {
-        alert('Failed to delete expense');
-      }
+    if (window.confirm('Are you sure you want to remove this expense record?')) {
+      await deleteExpense(id);
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const handleFormSubmit = async (formData) => {
+    if (editingExpense) {
+      await updateExpense(editingExpense._id, formData);
+    } else {
+      await addExpense(formData);
+    }
+    setIsFormOpen(false);
+    setEditingExpense(null);
   };
 
   return (
-    <div className="space-y-10 md:space-y-14 animate-in slide-in-from-bottom-5 duration-700 pb-24">
-      {/* Header with Navigation and Branding */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 bg-white/10 backdrop-blur-3xl p-8 rounded-[2.5rem] border border-white/20 shadow-2xl">
-        <div className="flex items-center gap-6">
+    <div className="space-y-10">
+      {/* Ceremony Header */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+        <div className="space-y-4">
           <button 
             onClick={() => navigate('/dashboard')}
-            className="p-4 bg-white/20 hover:bg-white/40 rounded-2xl transition-all text-primary"
+            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition-colors italic group"
           >
-            <ArrowLeft size={24} strokeWidth={3} />
+            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+            Back to Dashboard
           </button>
           <div>
-            <span className="text-primary font-black tracking-widest uppercase text-[10px] italic opacity-70">Wedding Ceremony</span>
-            <h1 className="text-3xl md:text-5xl font-black text-foreground capitalize tracking-tighter leading-none">{eventType} Expenses</h1>
-          </div>
-        </div>
-        
-        <div className="flex gap-4 w-full md:w-auto">
-          <button 
-             onClick={handleLogout}
-             className="flex flex-1 md:flex-none items-center justify-center gap-2 px-6 py-4 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-2xl transition-all font-black text-xs uppercase tracking-widest border border-red-500/10"
-          >
-            <LogOut size={18} /> Logout
-          </button>
-          <button 
-            onClick={() => { setEditingExpense(null); setIsFormOpen(true); }}
-            className="flex-1 md:flex-none btn-primary shadow-2xl shadow-primary/20"
-          >
-            <Plus size={20} strokeWidth={3} /> <span className="uppercase tracking-widest">Add Expense</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Ceremony Total Highlights */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="glass-card p-10 md:p-12 border-primary/20 bg-primary/5 shadow-2xl flex items-center gap-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full translate-x-12 -translate-y-12 blur-3xl" />
-          <div className="w-20 h-20 rounded-[1.75rem] bg-primary/20 flex items-center justify-center border border-primary/20 shadow-inner">
-             <IndianRupee size={32} className="text-primary" />
-          </div>
-          <div>
-            <p className="text-[10px] text-primary/60 font-black uppercase tracking-[0.2em] mb-1">Ceremony Total Spent</p>
-            <p className="text-4xl md:text-5xl font-black text-foreground tracking-tighter">₹{(totals[eventType.toLowerCase()] || 0).toLocaleString()}</p>
+            <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter uppercase italic mb-2">
+              {eventType} <span className="text-primary/20 italic">Expenses</span>
+            </h1>
+            <div className="flex items-center gap-3">
+               <div className="px-3 py-1 bg-primary/10 rounded-full border border-primary/10">
+                  <p className="text-[10px] font-black text-primary uppercase tracking-widest leading-none italic">{eventExpenses.length} Items Indexed</p>
+               </div>
+               <p className="text-[10px] font-black text-primary/40 uppercase tracking-[0.2em] italic underline decoration-primary/10 decoration-2 underline-offset-4">
+                 Full Ceremony Portfolio
+               </p>
+            </div>
           </div>
         </div>
 
-        <div className="glass-card p-10 md:p-12 border-white/40 shadow-2xl flex items-center gap-8">
-           <div className="w-20 h-20 rounded-[1.75rem] bg-white/40 flex items-center justify-center border border-white/60">
-              <Tag size={32} className="text-primary" />
+        <div className="flex items-center gap-4">
+           <div className="bg-white/40 backdrop-blur-3xl border border-white/60 p-6 px-8 rounded-[2rem] shadow-xl flex items-center gap-6">
+              <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                <IndianRupee size={24} />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-primary/30 uppercase tracking-widest leading-none mb-1">Total Ceremony Spend</p>
+                <h2 className="text-3xl font-black text-foreground tracking-tighter italic leading-none">₹{total.toLocaleString()}</h2>
+              </div>
            </div>
-           <div>
-              <p className="text-[10px] text-primary/60 font-black uppercase tracking-[0.2em] mb-1">Total Items Logged</p>
-              <p className="text-4xl md:text-5xl font-black text-foreground tracking-tighter">{eventExpenses.length}</p>
-           </div>
+           
+           <button 
+             onClick={handleAddNew}
+             className="btn-primary h-[88px] px-10 rounded-[2rem] shadow-2xl shadow-primary/30 flex flex-col items-center justify-center gap-1 group"
+           >
+             <Plus size={28} className="group-hover:rotate-90 transition-transform duration-500" />
+             <span className="text-[10px] uppercase font-black tracking-widest">Add Item</span>
+           </button>
         </div>
       </div>
 
-      {/* Search and Content */}
-      <div className="space-y-8">
-        <div className="relative group">
-          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={22} />
+      {/* Control Bar */}
+      <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex-1 relative group">
+          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
           <input 
-            type="text" 
-            placeholder={`Search ${eventType} expenses...`} 
-            className="input-field w-full pl-16 h-14 md:h-16 text-lg" 
-            value={searchTerm} 
-            onChange={(e) => setSearchTerm(e.target.value)} 
+            type="text"
+            placeholder="Search items, categories or vendors..."
+            className="input-field pl-16 h-16 bg-white/40"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-
-        <div className="glass-card border-white/40 shadow-2xl overflow-hidden backdrop-blur-3xl">
-          {filteredExpenses.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-primary/5 border-b border-white/10">
-                  <tr>
-                    <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">Details</th>
-                    <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">Category</th>
-                    <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 text-right">Price</th>
-                    <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/10">
-                  {filteredExpenses.map((exp) => (
-                    <tr key={exp._id} className="hover:bg-white/30 transition-all group">
-                      <td className="px-10 py-8">
-                        <div>
-                          <p className="text-xl font-black text-foreground tracking-tight">{exp.name}</p>
-                          {exp.description && (
-                            <p className="text-xs font-bold text-primary/40 italic flex items-center gap-1.5 mt-1">
-                              <Info size={12} /> {exp.description}
-                            </p>
-                          )}
-                          <p className="text-[10px] font-medium text-foreground/20 mt-2 uppercase tracking-widest flex items-center gap-1.5">
-                             <Calendar size={12} /> {new Date(exp.date).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="px-10 py-8">
-                        <span className="bg-white/60 border border-white/60 px-5 py-2 rounded-2xl text-[10px] font-black text-primary uppercase tracking-widest shadow-sm">
-                          {exp.category}
-                        </span>
-                      </td>
-                      <td className="px-10 py-8 text-right">
-                        <p className="text-3xl font-black text-primary tracking-tighter">₹{exp.price.toLocaleString()}</p>
-                      </td>
-                      <td className="px-10 py-8 text-center">
-                        <div className="inline-flex items-center gap-2 bg-white/40 border border-white/40 rounded-2xl p-2 shadow-inner">
-                          <button onClick={() => { setEditingExpense(exp); setIsFormOpen(true); }} className="p-3 hover:bg-primary/20 text-primary transition-all rounded-xl hover:scale-110"><Edit2 size={16} /></button>
-                          <button onClick={() => handleDelete(exp._id)} className="p-3 hover:bg-red-500/20 text-red-500 transition-all rounded-xl hover:scale-110"><Trash2 size={16} /></button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="py-32 text-center">
-              <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                 <Tag size={40} className="text-primary/20" />
-              </div>
-              <p className="text-sm font-black text-primary/30 uppercase tracking-[0.2em] italic">No expenses yet for {eventType}</p>
-              <button 
-                onClick={() => { setEditingExpense(null); setIsFormOpen(true); }}
-                className="mt-6 text-primary hover:underline text-[10px] font-black uppercase tracking-widest"
-              >
-                Let's add the first one
-              </button>
-            </div>
-          )}
+        <div className="flex gap-4">
+           <button className="h-16 w-16 bg-white/40 backdrop-blur-3xl border border-white/60 rounded-3xl flex items-center justify-center text-primary/40 hover:text-primary transition-all">
+              <Filter size={20} />
+           </button>
+           <button className="h-16 w-16 bg-white/40 backdrop-blur-3xl border border-white/60 rounded-3xl flex items-center justify-center text-primary/40 hover:text-primary transition-all">
+              <DownloadCloud size={20} />
+           </button>
         </div>
+      </div>
+
+      {/* Main Content Area: Responsive Toggle */}
+      <div className="space-y-6">
+        {filteredExpenses.length > 0 ? (
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden lg:block overflow-x-auto">
+                <table className="w-full text-left border-separate border-spacing-y-4">
+                    <thead>
+                        <tr className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/30 italic px-6">
+                            <th className="pb-4 pl-8">Item Description</th>
+                            <th className="pb-4">Category</th>
+                            <th className="pb-4">Date</th>
+                            <th className="pb-4">Amount</th>
+                            <th className="pb-4 text-right pr-8">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredExpenses.map((exp) => (
+                            <motion.tr 
+                                key={exp._id}
+                                layout
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="group"
+                            >
+                                <td className="bg-white/40 backdrop-blur-3xl border-y border-l border-white/60 rounded-l-[2rem] p-6 pl-8">
+                                    <div>
+                                        <p className="font-black text-foreground tracking-tight uppercase italic">{exp.name}</p>
+                                        <p className="text-[10px] font-medium text-primary/40 uppercase truncate max-w-xs">{exp.description || 'No notes provided'}</p>
+                                    </div>
+                                </td>
+                                <td className="bg-white/40 backdrop-blur-3xl border-y border-white/60 p-6">
+                                    <span className="px-4 py-1.5 bg-primary/5 border border-primary/10 rounded-full text-[10px] font-black text-primary uppercase tracking-widest italic">
+                                        {exp.category}
+                                    </span>
+                                </td>
+                                <td className="bg-white/40 backdrop-blur-3xl border-y border-white/60 p-6 text-xs font-black text-primary/60 uppercase tracking-widest italic">
+                                    {new Date(exp.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                                </td>
+                                <td className="bg-white/40 backdrop-blur-3xl border-y border-white/60 p-6">
+                                    <p className="text-xl font-black text-foreground tracking-tighter italic underline decoration-primary/5">₹{exp.price.toLocaleString()}</p>
+                                </td>
+                                <td className="bg-white/40 backdrop-blur-3xl border-y border-r border-white/60 rounded-r-[2rem] p-6 text-right pr-8">
+                                    <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button 
+                                            onClick={() => handleEdit(exp)}
+                                            className="p-3 bg-primary/10 rounded-xl text-primary hover:bg-primary hover:text-white transition-all shadow-lg"
+                                        >
+                                            <Edit3 size={18} />
+                                        </button>
+                                        <button 
+                                            onClick={() => handleDelete(exp._id)}
+                                            className="p-3 bg-red-500/10 rounded-xl text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
+                                </td>
+                            </motion.tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Mobile/Tablet Card View */}
+            <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filteredExpenses.map((exp) => (
+                    <motion.div 
+                        key={exp._id}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="auth-glass p-8 rounded-[2.5rem] space-y-6 relative overflow-hidden group"
+                    >
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <h4 className="text-xl font-black text-foreground tracking-tight underline italic decoration-primary/5">{exp.name}</h4>
+                                <span className="text-[10px] font-black text-primary/40 uppercase tracking-widest">{exp.category}</span>
+                            </div>
+                            <div className="flex gap-2">
+                                <button onClick={() => handleEdit(exp)} className="p-2.5 bg-primary/5 rounded-xl text-primary"><Edit3 size={16} /></button>
+                                <button onClick={() => handleDelete(exp._id)} className="p-2.5 bg-red-500/5 rounded-xl text-red-500"><Trash2 size={16} /></button>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="p-4 bg-white/40 rounded-2xl border border-white/60">
+                                <p className="text-[8px] font-black text-primary/30 uppercase tracking-widest mb-1 leading-none italic">Amount Paid</p>
+                                <p className="text-lg font-black text-foreground tracking-tighter italic">₹{exp.price.toLocaleString()}</p>
+                            </div>
+                            <div className="p-4 bg-white/40 rounded-2xl border border-white/60">
+                                <p className="text-[8px] font-black text-primary/30 uppercase tracking-widest mb-1 leading-none italic">Event Date</p>
+                                <p className="text-[13px] font-black text-primary uppercase italic">{new Date(exp.date).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+
+                        {exp.description && (
+                            <p className="text-[10px] font-medium text-primary/60 italic leading-relaxed line-clamp-2">
+                                "{exp.description}"
+                            </p>
+                        )}
+                    </motion.div>
+                ))}
+            </div>
+          </>
+        ) : (
+          /* Empty State Illustration */
+          <div className="py-24 flex flex-col items-center text-center">
+             <div className="w-32 h-32 bg-primary/5 rounded-[2.5rem] flex items-center justify-center text-primary/20 mb-8 animate-float">
+                <AlertCircle size={64} />
+             </div>
+             <h3 className="text-2xl font-black text-foreground uppercase italic tracking-tight mb-2">No Expense Records</h3>
+             <p className="text-[10px] font-black uppercase text-primary/30 tracking-[0.3em] mb-12 max-w-sm italic">
+                It looks like you haven't detailed any expenditures for this ceremony yet. 
+                Start by indexing your first item.
+             </p>
+             <button 
+                onClick={handleAddNew}
+                className="btn-primary px-12 py-5 rounded-2xl shadow-xl shadow-primary/20"
+             >
+                <Plus size={18} />
+                <span className="tracking-widest uppercase font-black text-xs">Create First Record</span>
+             </button>
+          </div>
+        )}
       </div>
 
       <ExpenseForm 
         isOpen={isFormOpen} 
         onClose={() => setIsFormOpen(false)} 
-        onSubmit={handleFormSubmit} 
-        initialData={editingExpense} 
+        onSubmit={handleFormSubmit}
+        initialData={editingExpense}
         forcedEvent={eventType}
       />
     </div>

@@ -6,6 +6,7 @@ import Layout from './components/Layout';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
 import EventPage from './pages/EventPage';
+import Profile from './pages/Profile';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -27,6 +28,7 @@ const App = () => {
             <Route path="/signup" element={<Auth mode="signup" />} />
             
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             
             {/* Dedicated Ceremony Routes */}
             <Route path="/event/engagement" element={<ProtectedRoute><EventPage eventType="engagement" /></ProtectedRoute>} />

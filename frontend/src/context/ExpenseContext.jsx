@@ -7,7 +7,7 @@ import 'jspdf-autotable';
 
 const ExpenseContext = createContext();
 
-export const useExpenses = () => useContext(ExpenseContext);
+export const useExpense = () => useContext(ExpenseContext);
 
 export const ExpenseProvider = ({ children }) => {
   const [expenses, setExpenses] = useState([]);

@@ -68,6 +68,39 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// @route   GET api/auth/profile
+// @desc    Get user profile details
+router.get('/profile', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+// @route   PUT api/auth/profile
+// @desc    Update user profile details
+router.put('/profile', auth, async (req, res) => {
+  const { name, phone, role, profileImage } = req.body;
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (name) user.name = name;
+    if (phone !== undefined) user.phone = phone;
+    if (role) user.role = role;
+    if (profileImage !== undefined) user.profileImage = profileImage;
+
+    await user.save();
+    res.json(user);
+  } catch (err) {
+    console.error('❌ UPDATE PROFILE ERROR:', err.message);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
 // @route   PUT api/auth/budgets
 // @desc    Update user specific budgets
 router.put('/budgets', auth, async (req, res) => {

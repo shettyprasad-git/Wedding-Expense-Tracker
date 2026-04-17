@@ -1,57 +1,44 @@
-import React from 'react';
-import { LogOut, User as UserIcon } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from 'react';
+import Navbar from './Navbar';
+import Sidebar from './Sidebar';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Layout = ({ children }) => {
-  const { logout, user } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const isDashboard = location.pathname === '/dashboard';
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-soft-gradient text-foreground relative font-sans overflow-x-hidden selection:bg-primary/20">
-      {/* Dynamic Background Flourishes */}
-      <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 translate-x-1/2 -translate-y-1/2" />
-      <div className="fixed bottom-0 left-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] -z-10 -translate-x-1/4 translate-y-1/4" />
+    <div className="min-h-screen bg-soft-gradient text-foreground font-sans selection:bg-primary/20">
+      {/* SaaS Frame: Fixed Top Navbar */}
+      <Navbar onMenuClick={() => setIsSidebarOpen(true)} />
 
-      {/* Simplified Global Header (Top-Right Actions) */}
-      <div className="fixed top-8 right-8 z-[100] flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-1000">
-        {!isDashboard && (
-          <div className="hidden sm:flex items-center gap-3 px-5 py-3 bg-white/40 backdrop-blur-3xl border border-white/40 rounded-3xl shadow-2xl">
-            <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary font-black text-xs border border-primary/10">
-              <UserIcon size={14} />
-            </div>
-            <span className="text-xs font-black text-primary uppercase tracking-widest">{user?.name || 'Planner'}</span>
-          </div>
-        )}
-        
-        <button 
-          onClick={handleLogout}
-          className="flex items-center gap-3 px-6 py-3.5 bg-white/60 backdrop-blur-3xl border border-white/40 rounded-3xl shadow-2xl text-primary font-black uppercase text-[10px] tracking-widest hover:bg-white transition-all group active:scale-95"
-        >
-          <LogOut size={18} className="group-hover:translate-x-0.5 transition-transform" />
-          <span className="hidden md:inline">Sign Out</span>
-        </button>
-      </div>
+      {/* SaaS Frame: Sidebar (Responsive) */}
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-      {/* Main Content Area - Center Aligned Hub Architecture */}
-      <main className="relative z-10 w-full min-h-screen pt-24 md:pt-32 pb-24 px-4 md:px-8">
-        <div className="max-w-6xl mx-auto">
-          {children}
+      {/* Main Content Area */}
+      <main className="lg:pl-72 pt-20 transition-all duration-500 min-h-screen relative overflow-x-hidden">
+        {/* Modern SaaS background flourishes */}
+        <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[140px] -z-10 translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[120px] -z-10 -translate-x-1/4 translate-y-1/4 pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto p-6 md:p-10 lg:p-12 animate-in fade-in duration-700">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={window.location.pathname}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </div>
-      </main>
 
-      {/* Branded Footer */}
-      <footer className="relative z-10 py-12 text-center opacity-30">
-        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Wedding Expense Tracker Premium</p>
-      </footer>
+        {/* Global Branded Footer */}
+        <footer className="mt-auto py-12 text-center opacity-30 border-t border-primary/5 mx-12">
+           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Wedding Planner Pro © 2026</p>
+        </footer>
+      </main>
     </div>
   );
 };

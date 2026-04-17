@@ -1,143 +1,186 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Heart, Sparkles, Church, Utensils, TrendingUp, IndianRupee, Layers, ArrowUpRight, FileJson, FileText, Wallet, ArrowRight } from 'lucide-react';
-import { useExpenses } from '../context/ExpenseContext';
+import { useExpense } from '../context/ExpenseContext';
 import { useAuth } from '../context/AuthContext';
-import StatCard from '../components/StatCard';
-import BudgetModal from '../components/BudgetModal';
+import { 
+  Heart, Sparkles, Church, Utensils, 
+  TrendingUp, IndianRupee, PieChart, 
+  ChevronRight, Calendar, ArrowUpRight
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const Dashboard = () => {
-  const { expenses, loading, totals, exportAllToCSV, exportAllToPDF } = useExpenses();
+  const { totals } = useExpense();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
 
-  const totalBudget = user?.budgets?.GrandTotal || 0;
-  const budgetProgress = totalBudget > 0 ? Math.min(((totals.GrandTotal || 0) / totalBudget) * 100, 100) : 0;
-
-  if (loading) {
-    return (
-      <div className="flex h-[60vh] items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
-      </div>
-    );
-  }
+  const grandTotal = totals.GrandTotal || 0;
+  const totalBudget = user?.budgets?.GrandTotal || 
+    (user?.budgets ? Object.values(user.budgets).reduce((a, b) => (typeof b === 'number' ? a + b : a), 0) : 0);
 
   const events = [
-    { title: 'Engagement', key: 'engagement', icon: Heart, color: 'bg-primary' },
-    { title: 'Mehndi', key: 'mehndi', icon: Sparkles, color: 'bg-secondary' },
-    { title: 'Marriage', key: 'marriage', icon: Church, color: 'bg-primary-dark' },
-    { title: 'Dinner', key: 'dinner', icon: Utensils, color: 'bg-secondary-dark' }
+    { title: 'Engagement', path: '/event/engagement', icon: Heart, color: 'from-pink-500 to-rose-500', amount: totals.engagement || 0, budget: user?.budgets?.Engagement || 0 },
+    { title: 'Mehndi', path: '/event/mehndi', icon: Sparkles, color: 'from-amber-400 to-orange-500', amount: totals.mehndi || 0, budget: user?.budgets?.Mehndi || 0 },
+    { title: 'Marriage', path: '/event/marriage', icon: Church, color: 'from-purple-600 to-indigo-600', amount: totals.marriage || 0, budget: user?.budgets?.Marriage || 0 },
+    { title: 'Dinner', path: '/event/dinner', icon: Utensils, color: 'from-emerald-400 to-teal-500', amount: totals.dinner || 0, budget: user?.budgets?.Dinner || 0 },
   ];
 
-  return (
-    <div className="space-y-10 md:space-y-16 animate-in fade-in slide-in-from-bottom-10 duration-1000 pb-24 px-1 md:px-0">
-      {/* Header with Quick Stats */}
-      <header className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-8">
-        <div>
-          <span className="text-primary font-black tracking-[0.3em] uppercase text-xs italic opacity-60">Wedding Hub</span>
-          <h1 className="text-5xl md:text-7xl font-black text-foreground mt-3 tracking-tighter leading-none">The Grand Budget</h1>
-        </div>
-        
-        <div className="flex flex-wrap items-center gap-6 w-full xl:w-auto">
-          <div className="glass-card p-1 border-white/40 shadow-2xl flex items-stretch">
-            <div className="px-8 py-6 md:px-12 md:py-8">
-              <p className="text-[10px] md:text-xs text-primary font-black uppercase tracking-[0.2em] mb-2 opacity-60 italic">Expense Done in Total</p>
-              <div className="flex items-baseline gap-1">
-                <span className="text-sm font-black text-primary/50">₹</span>
-                <p className="text-4xl md:text-5xl font-black text-foreground tracking-tighter">{(totals.GrandTotal || 0).toLocaleString()}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex flex-col gap-2 w-full sm:w-auto sm:flex-row">
-            <button 
-              onClick={() => setIsBudgetModalOpen(true)}
-              className="flex items-center justify-center gap-2 px-6 py-4 bg-secondary text-white rounded-3xl font-black uppercase text-[10px] tracking-widest hover:bg-secondary-dark transition-all shadow-xl shadow-secondary/20 group"
-            >
-              <Wallet size={16} className="group-hover:rotate-12 transition-transform" />
-              Settings
-            </button>
-            <div className="flex gap-2">
-              <button 
-                onClick={exportAllToCSV}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-white/40 border border-white/40 rounded-3xl text-primary font-black uppercase text-[10px] tracking-widest hover:bg-white transition-all shadow-lg"
-              >
-                CSV
-              </button>
-              <button 
-                onClick={exportAllToPDF}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-white/40 border border-white/40 rounded-3xl text-primary font-black uppercase text-[10px] tracking-widest hover:bg-white transition-all shadow-lg"
-              >
-                PDF
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+  const percentageSpent = totalBudget > 0 ? (grandTotal / totalBudget) * 100 : 0;
 
-      {/* Global Progress Bar */}
-      <div className="glass-card p-10 md:p-14 relative overflow-hidden group border-white/40 shadow-2xl">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-secondary" />
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-          <div className="flex items-center gap-3">
-            <TrendingUp size={32} className="text-primary" />
-            <h2 className="font-black text-2xl md:text-4xl tracking-tighter">Marriage Investment</h2>
+  return (
+    <div className="space-y-12 pb-12">
+      {/* Header & Welcome */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
+          <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter uppercase italic mb-2">Dashboard</h1>
+          <p className="text-xs font-black text-primary/40 uppercase tracking-[0.3em] italic">Hello, {user?.name.split(' ')[0] || 'Planner'}! Welcome to your wedding hub.</p>
+        </motion.div>
+
+        <div className="flex gap-4">
+          <div className="bg-white/40 backdrop-blur-3xl border border-white/60 p-4 px-6 rounded-[2rem] shadow-xl flex items-center gap-4">
+            <div className="w-10 h-10 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary">
+              <Calendar size={20} />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-primary/30 uppercase tracking-widest leading-none mb-1">Planning Date</p>
+              <p className="text-xs font-black text-foreground uppercase italic">{new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+            </div>
           </div>
-          <p className="text-xl md:text-2xl font-black text-foreground/40 tracking-tight">
-            ₹{(totals.GrandTotal || 0).toLocaleString()} / <span className="text-primary/40">₹{totalBudget.toLocaleString()}</span>
-          </p>
         </div>
-        <div className="w-full h-6 bg-primary/10 rounded-full overflow-hidden border border-white/10 shadow-inner">
-          <motion.div 
-            initial={{ width: 0 }}
-            animate={{ width: `${budgetProgress}%` }}
-            transition={{ duration: 2, ease: "circOut" }}
-            className={`h-full relative ${budgetProgress > 100 ? 'bg-red-500' : 'bg-gradient-to-r from-primary via-secondary to-primary'}`}
-          />
-        </div>
-        <p className="mt-4 text-[10px] font-black text-primary uppercase tracking-widest italic">{budgetProgress.toFixed(1)}% of planned budget consumed</p>
       </div>
 
-      {/* Event Selection Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14">
-        {events.map((event) => (
-          <motion.div 
-            key={event.key}
-            whileHover={{ translateY: -10 }}
-            className="glass-card p-10 md:p-12 border-white/40 shadow-2xl relative overflow-hidden group flex flex-col justify-between"
-          >
-            <div className={`absolute top-0 right-0 w-48 h-48 ${event.color} opacity-[0.03] rounded-full translate-x-16 -translate-y-16 group-hover:scale-125 transition-transform duration-1000`} />
-            
-            <div className="space-y-6">
-              <div className="flex justify-between items-start">
-                <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center shadow-2xl ${event.color} bg-opacity-10 border border-current/10`}>
-                   <event.icon className={event.color.replace('bg-', 'text-')} size={40} />
+      {/* Hero Financial Summary */}
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative p-10 md:p-14 rounded-[3.5rem] overflow-hidden shadow-2xl bg-primary shadow-primary/30"
+      >
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-secondary/20 rounded-full -translate-x-1/4 translate-y-1/4 blur-2xl" />
+        
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 items-center">
+            <div className="space-y-4">
+                <p className="text-white/60 text-sm font-black uppercase tracking-[0.3em] italic">Total Wedding Investment</p>
+                <div className="flex items-center gap-4">
+                    <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter italic">₹{grandTotal.toLocaleString()}</h2>
+                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white backdrop-blur-md">
+                        <TrendingUp size={24} />
+                    </div>
                 </div>
-                <div className="text-right">
-                  <span className="text-primary/40 text-[10px] font-black uppercase tracking-[0.3em] italic">Ceremony Target</span>
-                  <p className="text-sm font-black text-foreground/60 tracking-tight mt-1">₹{(user?.budgets?.[event.title] || 0).toLocaleString()}</p>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-3xl md:text-5xl font-black text-foreground tracking-tighter">{event.title}</h3>
-                <div className="flex items-baseline gap-1 mt-2">
-                   <span className="text-sm font-black text-primary/50">₹</span>
-                   <p className="text-4xl md:text-5xl font-black text-primary tracking-tighter">{(totals[event.key] || 0).toLocaleString()}</p>
-                </div>
-              </div>
+                <p className="text-white/40 text-xs font-black uppercase tracking-widest">Calculated across all ceremonies</p>
             </div>
 
-            <button 
-              onClick={() => navigate(`/event/${event.key}`)}
-              className="mt-12 w-full py-5 bg-white/40 hover:bg-white border border-white/50 rounded-[2rem] text-primary font-black uppercase text-[10px] tracking-[0.3em] transition-all flex items-center justify-center gap-3 group/btn shadow-lg"
-            >
-              Manage Expenses <ArrowRight size={16} className="group-hover/btn:translate-x-2 transition-transform" />
-            </button>
-          </motion.div>
-        ))}
+            <div className="space-y-6">
+                <div className="flex items-center justify-between text-white/80 text-xs font-black uppercase tracking-widest italic">
+                    <span>Overall Budget Progress</span>
+                    <span>{Math.round(percentageSpent)}%</span>
+                </div>
+                <div className="h-3 bg-white/10 rounded-full overflow-hidden border border-white/5">
+                    <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(percentageSpent, 100)}%` }}
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                        className={`h-full bg-gradient-to-r from-secondary to-orange-400 rounded-full`}
+                    />
+                </div>
+                <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">Target: ₹{totalBudget.toLocaleString()}</p>
+            </div>
+
+            <div className="hidden lg:flex justify-center">
+               <div className="w-32 h-32 border-4 border-white/10 rounded-full flex items-center justify-center relative">
+                  <div className="absolute inset-2 border-2 border-white/20 rounded-full animate-spin-slow" />
+                  <PieChart size={40} className="text-white/80" />
+               </div>
+            </div>
+        </div>
+      </motion.div>
+
+      {/* Ceremony Hub Grid */}
+      <div>
+        <div className="flex items-center justify-between mb-8 px-4">
+           <h3 className="text-xl font-black text-foreground tracking-tighter uppercase italic underline decoration-primary/20 underline-offset-8">Ceremony Portfolios</h3>
+           <p className="text-[10px] font-black text-primary/30 uppercase tracking-[0.3em] italic">4 Active Ceremonies</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {events.map((event, index) => (
+                <motion.div
+                    key={event.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ scale: 1.02 }}
+                    className="auth-glass p-8 rounded-[2.5rem] group cursor-pointer border-white/60 hover:border-primary/20 transition-all shadow-xl"
+                    onClick={() => navigate(event.path)}
+                >
+                    <div className="flex justify-between items-start mb-10">
+                        <div className={`p-5 rounded-2xl bg-gradient-to-br ${event.color} shadow-lg shadow-current/20 group-hover:rotate-6 transition-transform`}>
+                            <event.icon className="text-white" size={24} />
+                        </div>
+                        <div className="p-3 bg-primary/5 rounded-full text-primary opacity-0 group-hover:opacity-100 transition-all -translate-x-4 group-hover:translate-x-0">
+                            <ArrowUpRight size={18} />
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div>
+                            <p className="text-[13px] font-black text-primary/40 uppercase tracking-[0.2em] italic leading-none mb-1.5">{event.title}</p>
+                            <h4 className="text-2xl font-black text-foreground tracking-tight underline italic decoration-primary/5">₹{event.amount.toLocaleString()}</h4>
+                        </div>
+                        
+                        <div className="pt-4 border-t border-primary/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity">
+                            <span>Manage Plan</span>
+                            <ChevronRight size={14} className="text-primary" />
+                        </div>
+                    </div>
+                </motion.div>
+            ))}
+        </div>
+      </div>
+
+      {/* Analytics Shortcut Section (Sample) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div className="auth-glass p-10 rounded-[3rem] border-white/60">
+              <div className="flex items-center gap-4 mb-8">
+                  <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                      <TrendingUp size={24} />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-black text-foreground uppercase tracking-tight italic">Category Analysis</h4>
+                    <p className="text-[10px] uppercase font-black tracking-widest text-primary/40 italic leading-none">Global Expense Breakdown</p>
+                  </div>
+              </div>
+              <div className="space-y-6">
+                 {/* Simplified Analytics Sample */}
+                 {[
+                   { label: 'Catering', val: 45 },
+                   { label: 'Venue', val: 30 },
+                   { label: 'Decor', val: 25 }
+                 ].map(item => (
+                   <div key={item.label}>
+                      <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest mb-2 italic">
+                         <span className="text-primary">{item.label}</span>
+                         <span className="text-foreground">{item.val}%</span>
+                      </div>
+                      <div className="h-2 bg-primary/5 rounded-full overflow-hidden">
+                         <div className="h-full bg-primary rounded-full" style={{ width: `${item.val}%` }} />
+                      </div>
+                   </div>
+                 ))}
+              </div>
+          </div>
+
+          <div className="auth-glass p-10 rounded-[3rem] border-white/40 bg-secondary/5 flex flex-col justify-center text-center">
+              <div className="w-20 h-20 bg-white/60 rounded-[2rem] flex items-center justify-center text-secondary mx-auto mb-6 shadow-xl">
+                 <Sparkles size={40} />
+              </div>
+              <h4 className="text-xl font-black text-foreground uppercase tracking-tight italic mb-3">Professional Planning Tip</h4>
+              <p className="text-sm font-medium text-primary/60 max-w-xs mx-auto mb-8">Remember to verify your catering quotes against the final guest list for the Dinner ceremony.</p>
+              <button className="px-8 py-4 bg-white border border-secondary/20 rounded-2xl text-xs font-black uppercase tracking-widest text-secondary hover:bg-secondary hover:text-white transition-all">Dismiss Tip</button>
+          </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Save, IndianRupee, Calendar, Tag, AlignLeft, PlusCircle } from 'lucide-react';
+import { X, Save, IndianRupee, Calendar, Tag, AlignLeft, PlusCircle, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) => {
@@ -14,6 +14,7 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
 
   const [manualCategory, setManualCategory] = useState('');
   const [isOther, setIsOther] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const dateInputRef = useRef(null);
 
   const categories = ['Hall', 'Catering', 'Decoration', 'Travel', 'Misc', 'Other'];
@@ -58,40 +59,43 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const finalData = {
       ...formData,
       category: isOther ? manualCategory : formData.category
     };
-    onSubmit(finalData);
+    await onSubmit(finalData);
+    setIsSubmitting(false);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
       <motion.div 
         initial={{ opacity: 0, scale: 0.9, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="auth-glass w-full max-w-lg p-10 md:p-12 rounded-[2.5rem] relative shadow-2xl overflow-hidden"
+        className="auth-glass w-full max-w-2xl p-10 md:p-14 rounded-[3.5rem] relative shadow-2xl overflow-hidden border-white/60"
       >
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+        <div className="absolute bottom-0 right-0 w-40 h-40 bg-primary/5 rounded-full blur-[80px] translate-x-12 translate-y-12" />
         
         <div className="flex justify-between items-center mb-10">
           <div>
-            <h2 className="text-3xl font-black text-foreground tracking-tight">{initialData ? 'Edit Item' : 'Add New Item'}</h2>
-            <p className="text-[10px] text-primary font-black uppercase tracking-widest mt-1 italic">Ceremony: <span className="text-foreground">{forcedEvent || formData.event}</span></p>
+            <h2 className="text-4xl font-black text-foreground tracking-tighter uppercase italic mb-2">{initialData ? 'Update Record' : 'Add New Item'}</h2>
+            <p className="text-[10px] text-primary/40 font-black uppercase tracking-[0.3em] mt-1 italic leading-none">Ceremony Target: {forcedEvent || formData.event}</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-colors text-foreground/40">
-            <X size={28} />
+          <button onClick={onClose} className="p-3 hover:bg-white/20 rounded-full transition-colors text-foreground/40 group">
+            <X size={32} className="group-hover:rotate-90 transition-transform duration-500" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-10">
           {/* Name Field */}
           <div className="flex flex-col">
-            <label className="block text-[10px] font-black text-primary/70 ml-2 mb-2 uppercase tracking-[0.2em]">Item Name</label>
+            <label className="block text-[11px] font-black text-primary/60 ml-3 mb-3 uppercase tracking-[0.2em] italic leading-none">Finance Item Description</label>
             <div className="relative group">
               <Tag className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
               <input
@@ -99,8 +103,8 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="e.g., Stage Decor"
-                className="input-field pl-16 h-14"
+                placeholder="e.g., Guest House Accommodation"
+                className="input-field pl-16 h-16 bg-white/40 focus:bg-white"
                 required
               />
             </div>
@@ -109,21 +113,25 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
           {/* Category & Price Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="flex flex-col">
-              <label className="block text-[10px] font-black text-primary/70 ml-2 mb-2 uppercase tracking-[0.2em]">Category</label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="input-field shadow-sm appearance-none cursor-pointer h-14"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.4)' }}
-              >
-                {categories.map(cat => (
-                  <option key={cat} value={cat} className="text-foreground">{cat}</option>
-                ))}
-              </select>
+              <label className="block text-[11px] font-black text-primary/60 ml-3 mb-3 uppercase tracking-[0.2em] italic leading-none">Internal Category</label>
+              <div className="relative">
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="input-field shadow-sm appearance-none cursor-pointer h-16 bg-white/40 focus:bg-white"
+                >
+                  {categories.map(cat => (
+                    <option key={cat} value={cat} className="text-foreground">{cat} Management</option>
+                  ))}
+                </select>
+                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-20">
+                   <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-foreground" />
+                </div>
+              </div>
             </div>
             <div className="flex flex-col">
-              <label className="block text-[10px] font-black text-primary/70 ml-2 mb-2 uppercase tracking-[0.2em]">Price (₹)</label>
+              <label className="block text-[11px] font-black text-primary/60 ml-3 mb-3 uppercase tracking-[0.2em] italic leading-none">Investment Amount (₹)</label>
               <div className="relative group">
                 <IndianRupee className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
                 <input
@@ -131,8 +139,8 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
                   name="price"
                   value={formData.price}
                   onChange={handleChange}
-                  placeholder="0"
-                  className="input-field pl-16 h-14"
+                  placeholder="0.00"
+                  className="input-field pl-16 h-16 bg-white/40 focus:bg-white italic font-black text-xl tracking-tighter"
                   required
                 />
               </div>
@@ -143,12 +151,12 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
           <AnimatePresence mode="popLayout">
             {isOther && (
               <motion.div 
-                initial={{ opacity: 0, height: 0, y: -10 }}
-                animate={{ opacity: 1, height: 'auto', y: 0 }}
-                exit={{ opacity: 0, height: 0, y: -10 }}
-                className="flex flex-col"
+                initial={{ opacity: 0, y: -20, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                exit={{ opacity: 0, y: -20, height: 0 }}
+                className="flex flex-col overflow-hidden"
               >
-                <label className="block text-[10px] font-black text-secondary ml-2 mb-2 uppercase tracking-[0.2em]">Custom Category Name</label>
+                <label className="block text-[11px] font-black text-secondary ml-3 mb-3 uppercase tracking-[0.2em] italic leading-none">Defined Manual Category</label>
                 <div className="relative group">
                   <PlusCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary/30 group-focus-within:text-secondary transition-colors" size={20} />
                   <input
@@ -156,7 +164,7 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
                     value={manualCategory}
                     onChange={(e) => setManualCategory(e.target.value)}
                     placeholder="e.g., Photography, Jewelry..."
-                    className="input-field pl-16 h-14 border-secondary/20 focus:ring-secondary/20 focus:border-secondary/40"
+                    className="input-field pl-16 h-16 border-secondary/20 focus:ring-secondary/20 focus:border-secondary/40 bg-white/40 focus:bg-white"
                     required
                   />
                 </div>
@@ -164,9 +172,9 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
             )}
           </AnimatePresence>
 
-          {/* Date Field */}
+          {/* Date & Additional Row */}
           <div className="flex flex-col">
-            <label className="block text-[10px] font-black text-primary/70 ml-2 mb-2 uppercase tracking-[0.2em]">Date of Expense</label>
+            <label className="block text-[11px] font-black text-primary/60 ml-3 mb-3 uppercase tracking-[0.2em] italic leading-none">Effective Transaction Date</label>
             <div 
               className="relative group cursor-pointer"
               onClick={() => dateInputRef.current?.showPicker()}
@@ -178,7 +186,7 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
                 ref={dateInputRef}
                 value={formData.date}
                 onChange={handleChange}
-                className="input-field pl-16 cursor-pointer h-14"
+                className="input-field pl-16 cursor-pointer h-16 bg-white/40 focus:bg-white uppercase text-xs font-black tracking-widest italic"
                 required
               />
             </div>
@@ -186,34 +194,43 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
 
           {/* Description Field */}
           <div className="flex flex-col">
-            <label className="block text-[10px] font-black text-primary/70 ml-2 mb-2 uppercase tracking-[0.2em]">Brief Description</label>
+            <label className="block text-[11px] font-black text-primary/60 ml-3 mb-3 uppercase tracking-[0.2em] italic leading-none">Internal Transaction Notes</label>
             <div className="relative group">
-              <AlignLeft className="absolute left-6 top-5 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
+              <AlignLeft className="absolute left-6 top-6 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Include any important booking details..."
-                className="input-field pl-16 h-28 resize-none pt-5"
+                placeholder="Include payment milestones, vendor contact or specific booking details..."
+                className="input-field pl-16 h-32 resize-none pt-6 bg-white/40 focus:bg-white text-xs font-medium italic"
               />
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-4 pt-6">
+          {/* SaaS Actions */}
+          <div className="flex gap-6 pt-6">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-8 py-5 rounded-2xl border border-primary/10 text-primary font-black uppercase text-xs tracking-widest hover:bg-primary/5 transition-all"
+              className="flex-1 px-8 py-5 rounded-2xl border border-primary/10 text-primary font-black uppercase text-xs tracking-[0.2em] hover:bg-primary/5 transition-all italic"
             >
-              Cancel
+              Discard Changes
             </button>
             <button
               type="submit"
-              className="flex-[2] btn-primary shadow-2xl shadow-primary/20"
+              disabled={isSubmitting}
+              className="flex-[2] btn-primary shadow-2xl shadow-primary/30 h-16"
             >
-              <Save size={22} className="stroke-2" />
-              <span className="tracking-widest uppercase font-black">{initialData ? 'Update Record' : 'Save Record'}</span>
+              {isSubmitting ? (
+                <CheckCircle2 size={24} className="animate-spin text-white" />
+              ) : (
+                <>
+                  <Save size={20} className="stroke-[3]" />
+                  <span className="tracking-[0.3em] uppercase font-black text-sm italic ml-1">
+                    {initialData ? 'Commit Record' : 'Finalize Entry'}
+                  </span>
+                </>
+              )}
             </button>
           </div>
         </form>

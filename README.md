@@ -1,60 +1,80 @@
-# 💍 Wedding Expense Tracker
+# 💍 Wedding Expense Tracker: Pro SaaS 🚀✨
 
-A premium, full-stack web application designed to help couples manage their wedding finances with a modern, glassmorphic UI.
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://weddingexpense.vercel.app/)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/shettyprasad-git/Wedding-Expense-Tracker)
+
+A premium, production-grade SaaS application designed to help couples manage their wedding finances with a modern, glassmorphic UI and comprehensive identity management.
 
 ![Dashboard Preview](frontend/src/assets/wedding_bg.png)
 
-## ✨ Features
+## 🌐 Live Link
+**[Visit Website: weddingexpense.vercel.app](https://weddingexpense.vercel.app/)**
 
-- **Modern UI/UX**: Illustrative glassmorphic design using Tailwind CSS and Framer Motion.
-- **Unified Dashboard**: Real-time spending summaries and interactive charts (Recharts).
-- **Event Sections**: Dedicated tracking for Engagement, Mehndi, Marriage, and Dinner.
-- **CRUD Operations**: Securely add, edit, and delete expenses for every category.
-- **Authentication**: JWT-based login and signup system for private data management.
-- **CSV Export**: Export filtered expense reports to CSV for external use.
-- **Mobile Responsive**: Fully adaptive design for cross-device usage.
+---
+
+## ✨ Modern SaaS Features
+
+### 1. Pro-Planning Architecture
+- **Sidebar + Navbar Shell**: A professional navigation system featuring a fixed top bar and a responsive side drawer.
+- **Persistent Header**: Quick access to global settings and a recursive **Profile Dropdown**.
+- **Ceremony Portfolios**: Dedicated, high-fidelity management suites for `Engagement`, `Mehndi`, `Marriage`, and `Dinner`.
+
+### 2. Identity Hub & Avatar Selection
+- **Profile Management**: Maintain your wedding identity with customizable Name, Phone, and Wedding Roles.
+- **Avatar Gallery**: Click-to-select identity hub featuring 8 curated high-quality wedding and planner portraits.
+- **Real-time Sync**: Your visual identity and role are synchronized across the entire platform.
+
+### 3. Advanced Financial Analytics
+- **Investment Hero**: High-impact "Total Wedding Investment" card with real-time progress bars.
+- **Budget Targets**: Set investment thresholds per ceremony and track actual vs. target spending.
+- **Responsive Table/Card Toggle**: Lists automatically transform between **Elite Data Tables** (Desktop) and **Interactive Cards** (Mobile).
+
+### 4. Technical Performance
+- **Full-Stack Security**: JWT-based authentication for private data isolation.
+- **Glassmorphism Design**: Ultra-premium UI built with Tailwind CSS v4 and Framer Motion.
+- **Export Power**: Export your comprehensive financial history to **CSV** or **PDF**.
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React.js, Vite, Tailwind CSS, Recharts, Lucide Icons, Framer Motion.
-- **Backend**: Node.js, Express.js, JWT Authentication.
-- **Database**: MongoDB (Atlas) via Mongoose ORM.
-- **Hosting**: Prepared for Vercel (Frontend) and Render (Backend).
+- **Frontend**: React.js, Vite, Tailwind CSS v4, Lucide Icons, Framer Motion.
+- **Backend**: Node.js, Express.js, MongoDB + Mongoose.
+- **State**: Context API (Auth & Expense synchronization).
+- **Deployment**: Vercel (Frontend), Render (Backend).
 
-## 🚀 Getting Started Locally
+---
 
-### 1. Prerequisites
-- [Node.js](https://nodejs.org/) installed.
-- [MongoDB](https://www.mongodb.com/) running locally or a MongoDB Atlas URI.
+## 🚀 Local Development
 
-### 2. Setup Backend
+### 1. Backend Setup
 ```bash
 cd backend
 npm install
-node seed.js  # Optional: Seed sample data
 npm start
 ```
-*Creates a server at `http://localhost:5000`*
+*Port: `http://localhost:5000`*
 
-### 3. Setup Frontend
+### 2. Frontend Setup
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-*Launches the app at `http://localhost:5173`*
+*Port: `http://localhost:5173`*
 
-## 🌐 Deployment (Free Tier)
+---
 
-This project is optimized for deployment on:
-- **Frontend**: [Vercel](https://vercel.com/)
-- **Backend**: [Render](https://render.com/)
-- **Database**: [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+## 🌐 Deployment Logic
 
-For detailed deployment steps, please refer to the `walkthrough.md`.
+- **Frontend**: Deployed on [Vercel](https://weddingexpense.vercel.app/).
+- **Backend API**: Optimized for [Render](https://render.com/).
+- **Database**: Cloud-hosted via [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
 
-## 🔒 Environment Variables
-Create a `.env` file in the `backend` folder:
+---
+
+## 🔒 Security & Env
+Required `.env` in `backend/`:
 ```env
 PORT=5000
 MONGODB_URI=your_mongodb_connection_string
@@ -62,4 +82,4 @@ JWT_SECRET=your_jwt_secret_key
 ```
 
 ---
-*Created with ❤️ by Prasad Shetty*
+*Developed with ❤️ for perfect ceremonies.*
