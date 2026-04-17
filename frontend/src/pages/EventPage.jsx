@@ -7,7 +7,7 @@ import {
   IndianRupee, Tag, Calendar, AlignLeft,
   ChevronRight, MoreVertical, Search,
   Filter, DownloadCloud, AlertCircle,
-  Target, Edit3, TrendingDown
+  Target, TrendingDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -291,6 +291,7 @@ const EventPage = ({ eventType: propEventType }) => {
         onSubmit={handleFormSubmit}
         initialData={editingExpense}
         forcedEvent={eventType}
+      />
       <BudgetModal 
         isOpen={isBudgetModalOpen}
         onClose={() => setIsBudgetModalOpen(false)}
