@@ -7,7 +7,7 @@ const expenseSchema = new mongoose.Schema({
     required: true, 
     enum: ['Engagement', 'Mehndi', 'Marriage', 'Dinner'] 
   },
-  title: { type: String, required: true },
+  name: { type: String, required: true }, // Changed from title
   category: { 
     type: String, 
     required: true, 
@@ -21,9 +21,9 @@ const expenseSchema = new mongoose.Schema({
       'Miscellaneous'
     ] 
   },
-  amount: { type: Number, required: true },
+  price: { type: Number, required: true }, // Changed from amount
   date: { type: Date, required: true },
-  notes: { type: String },
+  description: { type: String }, // Changed from notes
   createdAt: { type: Date, default: Date.now }
 });
 

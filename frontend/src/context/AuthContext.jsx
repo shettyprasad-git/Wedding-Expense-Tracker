@@ -9,20 +9,21 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadUser = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const res = await api.get('/auth/user');
-          setUser(res.data);
-        } catch (err) {
-          localStorage.removeItem('token');
-          setUser(null);
-        }
+  const loadUser = async () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const res = await api.get('/auth/user');
+        setUser(res.data);
+      } catch (err) {
+        localStorage.removeItem('token');
+        setUser(null);
       }
-      setLoading(false);
-    };
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
     loadUser();
   }, []);
 
@@ -45,8 +46,19 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateBudgets = async (budgetData) => {
+    try {
+      const res = await api.put('/auth/budgets', budgetData);
+      setUser(prev => ({ ...prev, budgets: res.data }));
+      return res.data;
+    } catch (err) {
+      console.error('❌ Update Budgets Error:', err);
+      throw err;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, signup, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, signup, login, logout, updateBudgets, refreshUser: loadUser }}>
       {children}
     </AuthContext.Provider>
   );

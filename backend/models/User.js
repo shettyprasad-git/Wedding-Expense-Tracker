@@ -5,6 +5,13 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  budgets: {
+    Engagement: { type: Number, default: 0 },
+    Mehndi: { type: Number, default: 0 },
+    Marriage: { type: Number, default: 0 },
+    Dinner: { type: Number, default: 0 },
+    GrandTotal: { type: Number, default: 0 }
+  },
   createdAt: { type: Date, default: Date.now }
 });
 
