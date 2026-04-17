@@ -23,10 +23,17 @@ export default {
         },
         accent: "#D4AF37", // Rose Gold/Gold
       },
+      fontFamily: {
+        sans: ['Outfit', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Outfit', 'sans-serif'],
+      },
       backgroundImage: {
-        'wedding-bg': "url('/src/assets/wedding_bg.png')",
+        'wedding-bg': "url('./src/assets/wedding_bg.png')",
         'soft-gradient': 'linear-gradient(135deg, #fdf8ff 0%, #fff3e2 100%)',
       },
+      boxShadow: {
+        'glass': '0 8px 32px 0 rgba(157, 118, 193, 0.1);',
+      }
     },
   },
   plugins: [],
