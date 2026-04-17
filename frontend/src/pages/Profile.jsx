@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Phone, Heart, Save, Edit, ArrowLeft, Camera, CheckCircle2, ChevronRight } from 'lucide-react';
+import { User, Mail, Phone, Heart, Save, Edit, ArrowLeft, Camera, CheckCircle2, ChevronRight, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MALE_AVATAR = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop';
