@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
   },
   weddingRole: { 
     type: String, 
-    enum: ['Brother', 'Sister', 'Planner', 'Other', ''], 
+    enum: ['Brother', 'Sister', 'Planner', 'Other', 'Bride', 'Groom', 'Associate', ''], 
     default: 'Planner' 
   },
   profileImage: { type: String, default: '' },
