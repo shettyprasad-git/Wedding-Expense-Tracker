@@ -34,7 +34,7 @@ const Support = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div>
           <h1 className="text-4xl font-black text-foreground tracking-tighter uppercase italic mb-2 flex items-center gap-4">
-            Support Center <LifeBuoy className="text-primary animate-float" size={32} />
+            Support Center <HelpCircle className="text-primary animate-float" size={32} />
           </h1>
           <p className="text-xs font-black text-primary/40 uppercase tracking-[0.3em] italic">Get expert help with your wedding planning investment</p>
         </div>

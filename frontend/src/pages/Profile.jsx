@@ -346,7 +346,6 @@ const Profile = () => {
              rel="noopener noreferrer"
              className="auth-glass p-8 rounded-[2.5rem] group hover:bg-black hover:text-white transition-all overflow-hidden relative"
            >
-              <Github className="absolute -right-4 -bottom-4 w-24 h-24 text-primary/5 group-hover:text-white/5 transition-colors rotate-12" />
               <div className="flex items-center justify-between mb-6">
                  <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center group-hover:bg-white/10 transition-colors">
                     <User size={24} />
@@ -364,7 +363,6 @@ const Profile = () => {
              rel="noopener noreferrer"
              className="auth-glass p-8 rounded-[2.5rem] group hover:bg-[#0077b5] hover:text-white transition-all overflow-hidden relative"
            >
-              <Linkedin className="absolute -right-4 -bottom-4 w-24 h-24 text-[#0077b5]/5 group-hover:text-white/5 transition-colors rotate-12" />
               <div className="flex items-center justify-between mb-6">
                  <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center group-hover:bg-white/10 transition-colors">
                     <User size={24} />

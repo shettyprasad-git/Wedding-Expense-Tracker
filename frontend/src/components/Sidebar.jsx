@@ -1,9 +1,10 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Heart, Sparkles, Church, Utensils, X, User } from 'lucide-react';
+import { useNavigate, NavLink } from 'react-router-dom';
+import { LayoutDashboard, Heart, Sparkles, Church, Utensils, X, User, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
   const menuItems = [
     { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { title: 'Engagement', path: '/event/engagement', icon: Heart },
@@ -77,8 +78,14 @@ const Sidebar = ({ isOpen, onClose }) => {
             <div className="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-full translate-x-4 -translate-y-4 group-hover:scale-150 transition-transform duration-700" />
             <p className="text-[10px] font-black text-primary/40 uppercase tracking-widest mb-2 italic leading-tight">Elite Support</p>
             <p className="text-xs font-black text-foreground mb-4">Need help with your wedding budget?</p>
-            <button className="w-full py-3 bg-white border border-primary/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-white transition-all shadow-lg">
-              Contact Expert
+            <button 
+              onClick={() => {
+                navigate('/support');
+                if (window.innerWidth < 1024) onClose();
+              }}
+              className="w-full py-3 bg-white border border-primary/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-white transition-all shadow-lg flex items-center justify-center gap-2"
+            >
+              Contact Experts <HelpCircle size={14} />
             </button>
           </div>
         </div>
