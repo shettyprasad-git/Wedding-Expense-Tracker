@@ -4,15 +4,18 @@ import { useAuth } from '../context/AuthContext';
 import { 
   Heart, Sparkles, Church, Utensils, 
   TrendingUp, IndianRupee, PieChart, 
-  ChevronRight, Calendar, ArrowUpRight
+  ChevronRight, Calendar, ArrowUpRight,
+  Edit3
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import BudgetModal from '../components/BudgetModal';
 
 const Dashboard = () => {
   const { totals, categoryBreakdown } = useExpense();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
 
   const grandTotal = totals.GrandTotal || 0;
   const totalBudget = user?.budgets?.GrandTotal || 
@@ -76,7 +79,13 @@ const Dashboard = () => {
             <div className="space-y-6">
                 <div className="flex items-center justify-between text-white/80 text-xs font-black uppercase tracking-widest italic">
                     <span>Overall Budget Progress</span>
-                    <span>{Math.round(percentageSpent)}%</span>
+                    <button 
+                        onClick={() => setIsBudgetModalOpen(true)}
+                        className="flex items-center gap-2 hover:text-white transition-colors group"
+                    >
+                        <span>{Math.round(percentageSpent)}%</span>
+                        <Edit3 size={14} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                    </button>
                 </div>
                 <div className="h-3 bg-white/10 rounded-full overflow-hidden border border-white/5">
                     <motion.div 
@@ -129,6 +138,11 @@ const Dashboard = () => {
                         <div>
                             <p className="text-[13px] font-black text-primary/40 uppercase tracking-[0.2em] italic leading-none mb-1.5">{event.title}</p>
                             <h4 className="text-2xl font-black text-foreground tracking-tight underline italic decoration-primary/5">₹{event.amount.toLocaleString()}</h4>
+                            {event.budget > 0 && (
+                                <p className="text-[9px] font-black text-primary/30 uppercase tracking-widest mt-1 italic">
+                                    Target: ₹{event.budget.toLocaleString()}
+                                </p>
+                            )}
                         </div>
                         
                         <div className="pt-4 border-t border-primary/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity">
@@ -187,6 +201,12 @@ const Dashboard = () => {
               <button className="px-8 py-4 bg-white border border-secondary/20 rounded-2xl text-xs font-black uppercase tracking-widest text-secondary hover:bg-secondary hover:text-white transition-all">Dismiss Tip</button>
           </div>
       </div>
+
+      <BudgetModal 
+        isOpen={isBudgetModalOpen}
+        onClose={() => setIsBudgetModalOpen(false)}
+        currentBudget={user?.budgets?.GrandTotal || 0}
+      />
     </div>
   );
 };

@@ -6,9 +6,12 @@ import {
   Plus, ArrowLeft, Trash2, Edit3, 
   IndianRupee, Tag, Calendar, AlignLeft,
   ChevronRight, MoreVertical, Search,
-  Filter, DownloadCloud, AlertCircle
+  Filter, DownloadCloud, AlertCircle,
+  Target, Edit3, TrendingDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
+import BudgetModal from '../components/BudgetModal';
 
 const EventPage = ({ eventType: propEventType }) => {
   const { type: paramEventType } = useParams();
@@ -16,7 +19,9 @@ const EventPage = ({ eventType: propEventType }) => {
   const navigate = useNavigate();
   const { expenses, deleteExpense, addExpense, updateExpense, fetchEventExpenses } = useExpense();
   
+  const { user } = useAuth();
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -27,6 +32,11 @@ const EventPage = ({ eventType: propEventType }) => {
   );
 
   const total = eventExpenses.reduce((sum, exp) => sum + exp.price, 0);
+
+  // Map eventType to the correct budget key (First letter uppercase matches User.js)
+  const budgetKey = eventType ? eventType.charAt(0).toUpperCase() + eventType.slice(1).toLowerCase() : null;
+  const ceremonyBudget = user?.budgets?.[budgetKey] || 0;
+  const isOverBudget = ceremonyBudget > 0 && total > ceremonyBudget;
 
   useEffect(() => {
     fetchEventExpenses(eventType);
@@ -95,6 +105,27 @@ const EventPage = ({ eventType: propEventType }) => {
                 <h2 className="text-3xl font-black text-foreground tracking-tighter italic leading-none">₹{total.toLocaleString()}</h2>
               </div>
            </div>
+
+           <div className={`bg-white/40 backdrop-blur-3xl border ${isOverBudget ? 'border-red-500/20 shadow-red-500/10' : 'border-white/60'} p-6 px-8 rounded-[2rem] shadow-xl flex items-center gap-6 group relative overflow-hidden`}>
+              {isOverBudget && <div className="absolute top-0 left-0 w-full h-1 bg-red-500/40" />}
+              <div className={`w-12 h-12 ${isOverBudget ? 'bg-red-500/10 text-red-500' : 'bg-secondary/10 text-secondary'} rounded-2xl flex items-center justify-center`}>
+                <Target size={24} />
+              </div>
+              <div className="flex-1">
+                <p className="text-[10px] font-black text-primary/30 uppercase tracking-widest leading-none mb-1">Ceremony Budget</p>
+                <div className="flex items-center gap-3">
+                  <h2 className={`text-3xl font-black ${isOverBudget ? 'text-red-600' : 'text-foreground'} tracking-tighter italic leading-none`}>
+                    ₹{ceremonyBudget.toLocaleString()}
+                  </h2>
+                  <button 
+                    onClick={() => setIsBudgetModalOpen(true)}
+                    className="p-2 bg-primary/5 rounded-xl text-primary opacity-0 group-hover:opacity-100 transition-all hover:bg-primary hover:text-white"
+                  >
+                    <Edit3 size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
            
            <button 
              onClick={handleAddNew}
@@ -260,6 +291,11 @@ const EventPage = ({ eventType: propEventType }) => {
         onSubmit={handleFormSubmit}
         initialData={editingExpense}
         forcedEvent={eventType}
+      <BudgetModal 
+        isOpen={isBudgetModalOpen}
+        onClose={() => setIsBudgetModalOpen(false)}
+        eventName={budgetKey}
+        currentBudget={ceremonyBudget}
       />
     </div>
   );
