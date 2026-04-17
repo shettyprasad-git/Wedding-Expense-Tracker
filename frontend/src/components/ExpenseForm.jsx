@@ -17,14 +17,28 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dateInputRef = useRef(null);
 
-  const categories = ['Hall', 'Catering', 'Decoration', 'Travel', 'Misc', 'Other'];
+  const categories = [
+    { label: 'Venue & Hall', icon: 'Home' },
+    { label: 'Catering & Food', icon: 'Utensils' },
+    { label: 'Decoration & Setup', icon: 'Palette' },
+    { label: 'Travel & Logistics', icon: 'Truck' },
+    { label: 'Wedding Attire & Styling', icon: 'Watch' },
+    { label: 'Photography & Videography', icon: 'Camera' },
+    { label: 'Entertainment & Music', icon: 'Music' },
+    { label: 'Invitations & Printing', icon: 'FileText' },
+    { label: 'Gifts & Return Gifts', icon: 'Gift' },
+    { label: 'Miscellaneous', icon: 'Layers' },
+    { label: 'Other (Custom)', icon: 'PlusCircle' }
+  ];
 
   useEffect(() => {
     if (initialData) {
-      const isCustom = !['Hall', 'Catering', 'Decoration', 'Travel', 'Misc'].includes(initialData.category);
+      const standardCategory = categories.find(c => c.label === initialData.category);
+      const isCustom = !standardCategory;
+      
       setFormData({
         name: initialData.name || '',
-        category: isCustom ? 'Other' : (initialData.category || 'Catering'),
+        category: isCustom ? 'Other (Custom)' : (initialData.category || ''),
         price: initialData.price || '',
         date: initialData.date ? new Date(initialData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
         description: initialData.description || '',
@@ -40,7 +54,7 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
     } else {
       setFormData({
         name: '',
-        category: 'Catering',
+        category: '', // Select Category default
         price: '',
         date: new Date().toISOString().split('T')[0],
         description: '',
@@ -54,13 +68,17 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'category') {
-      setIsOther(value === 'Other');
+      setIsOther(value === 'Other (Custom)');
     }
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.category) {
+      alert('Please select a category');
+      return;
+    }
     setIsSubmitting(true);
     const finalData = {
       ...formData,
@@ -84,8 +102,8 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
         
         <div className="flex justify-between items-center mb-10">
           <div>
-            <h2 className="text-4xl font-black text-foreground tracking-tighter uppercase italic mb-2">{initialData ? 'Update Record' : 'Add New Item'}</h2>
-            <p className="text-[10px] text-primary/40 font-black uppercase tracking-[0.3em] mt-1 italic leading-none">Ceremony Target: {forcedEvent || formData.event}</p>
+            <h2 className="text-4xl font-black text-foreground tracking-tighter uppercase italic mb-2">{initialData ? 'Refine Record' : 'Index Expense'}</h2>
+            <p className="text-[10px] text-primary/40 font-black uppercase tracking-[0.3em] mt-1 italic leading-none">Ceremony Portfolio: {forcedEvent || formData.event}</p>
           </div>
           <button onClick={onClose} className="p-3 hover:bg-white/20 rounded-full transition-colors text-foreground/40 group">
             <X size={32} className="group-hover:rotate-90 transition-transform duration-500" />
@@ -95,44 +113,57 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name Field */}
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-black text-primary/60 px-1 uppercase tracking-[0.2em] italic leading-none">Finance Item Description</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="e.g., Guest House Accommodation"
-              className="input-field w-full bg-white/40 focus:bg-white px-5 py-4"
-              required
-            />
+            <label className="text-[11px] font-black text-primary/60 px-1 uppercase tracking-[0.2em] italic leading-none">Transaction Identification</label>
+            <div className="relative group">
+              <PlusCircle className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/20 group-focus-within:text-primary transition-colors" size={20} />
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="e.g., Grand Ballroom Deposit"
+                className="input-field w-full pl-14 bg-white/40 focus:bg-white"
+                required
+              />
+            </div>
           </div>
 
           {/* Category & Price Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex flex-col gap-2">
-              <label className="text-[11px] font-black text-primary/60 px-1 uppercase tracking-[0.2em] italic leading-none">Internal Category</label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="input-field w-full appearance-none cursor-pointer bg-white/40 focus:bg-white px-5 py-4"
-              >
-                {categories.map(cat => (
-                  <option key={cat} value={cat} className="text-foreground">{cat} Management</option>
-                ))}
-              </select>
+              <label className="text-[11px] font-black text-primary/60 px-1 uppercase tracking-[0.2em] italic leading-none">Ceremony Category</label>
+              <div className="relative group">
+                <Tag className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/20 pointer-events-none" size={20} />
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="input-field w-full pl-14 appearance-none cursor-pointer bg-white/40 focus:bg-white"
+                  required
+                >
+                  <option value="" disabled>Select Category</option>
+                  {categories.map(cat => (
+                    <option key={cat.label} value={cat.label} className="text-foreground">
+                      {cat.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[11px] font-black text-primary/60 px-1 uppercase tracking-[0.2em] italic leading-none">Investment Amount (₹)</label>
-              <input
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                placeholder="0.00"
-                className="input-field w-full bg-white/40 focus:bg-white px-5 py-4 italic font-black text-xl tracking-tighter"
-                required
-              />
+              <label className="text-[11px] font-black text-primary/60 px-1 uppercase tracking-[0.2em] italic leading-none">Financial Value (₹)</label>
+              <div className="relative group">
+                <IndianRupee className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/20 group-focus-within:text-primary transition-colors" size={20} />
+                <input
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  placeholder="0.00"
+                  className="input-field w-full pl-14 bg-white/40 focus:bg-white font-black text-xl tracking-tighter italic"
+                  required
+                />
+              </div>
             </div>
           </div>
 
@@ -140,18 +171,18 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
           <AnimatePresence mode="popLayout">
             {isOther && (
               <motion.div 
-                initial={{ opacity: 0, y: -10, height: 0 }}
-                animate={{ opacity: 1, y: 0, height: 'auto' }}
-                exit={{ opacity: 0, y: -10, height: 0 }}
-                className="flex flex-col gap-2 overflow-hidden"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="flex flex-col gap-2"
               >
-                <label className="text-[11px] font-black text-secondary px-1 uppercase tracking-[0.2em] italic leading-none">Defined Manual Category</label>
+                <label className="text-[11px] font-black text-secondary px-1 uppercase tracking-[0.2em] italic leading-none">Enter Custom Category</label>
                 <input
                   type="text"
                   value={manualCategory}
                   onChange={(e) => setManualCategory(e.target.value)}
-                  placeholder="e.g., Photography, Jewelry..."
-                  className="input-field w-full border-secondary/20 focus:ring-secondary/20 focus:border-secondary/40 bg-white/40 focus:bg-white px-5 py-4"
+                  placeholder="e.g., Jewelry, Flower Garlands..."
+                  className="input-field w-full border-secondary/20 focus:ring-secondary/20 focus:border-secondary/40 bg-white/40 focus:bg-white"
                   required
                 />
               </motion.div>

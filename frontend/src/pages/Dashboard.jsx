@@ -154,22 +154,27 @@ const Dashboard = () => {
                   </div>
               </div>
               <div className="space-y-6">
-                 {/* Simplified Analytics Sample */}
-                 {[
-                   { label: 'Catering', val: 45 },
-                   { label: 'Venue', val: 30 },
-                   { label: 'Decor', val: 25 }
-                 ].map(item => (
-                   <div key={item.label}>
-                      <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest mb-2 italic">
-                         <span className="text-primary">{item.label}</span>
-                         <span className="text-foreground">{item.val}%</span>
-                      </div>
-                      <div className="h-2 bg-primary/5 rounded-full overflow-hidden">
-                         <div className="h-full bg-primary rounded-full" style={{ width: `${item.val}%` }} />
-                      </div>
+                 {categoryBreakdown.length > 0 ? (
+                   categoryBreakdown.slice(0, 5).map(item => (
+                    <div key={item.label}>
+                       <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest mb-2 italic">
+                          <span className="text-primary">{item.label}</span>
+                          <span className="text-foreground">{item.val}%</span>
+                       </div>
+                       <div className="h-2 bg-primary/5 rounded-full overflow-hidden">
+                          <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${item.val}%` }}
+                            className="h-full bg-primary rounded-full transition-all duration-1000" 
+                          />
+                       </div>
+                    </div>
+                   ))
+                 ) : (
+                   <div className="py-8 text-center border-2 border-dashed border-primary/5 rounded-3xl">
+                      <p className="text-[10px] font-black uppercase text-primary/20 tracking-widest">Awaiting Data Breakdown</p>
                    </div>
-                 ))}
+                 )}
               </div>
           </div>
 

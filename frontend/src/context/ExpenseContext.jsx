@@ -148,12 +148,33 @@ export const ExpenseProvider = ({ children }) => {
     } catch (err) { console.error('❌ PDF Export Error:', err); }
   };
 
+  // Dynamic Category Breakdown for Analytics
+  const categoryBreakdown = useMemo(() => {
+    const counts = {};
+    filteredExpenses.forEach(exp => {
+      const cat = exp.category || 'Miscellaneous';
+      counts[cat] = (counts[cat] || 0) + (exp.price || 0);
+    });
+    
+    const total = Object.values(counts).reduce((a, b) => a + b, 0);
+    if (total === 0) return [];
+    
+    return Object.entries(counts)
+      .map(([label, amount]) => ({
+        label,
+        val: Math.round((amount / total) * 100),
+        amount
+      }))
+      .sort((a, b) => b.amount - a.amount);
+  }, [filteredExpenses]);
+
   return (
     <ExpenseContext.Provider value={{ 
       expenses: filteredExpenses, 
       allExpenses: expenses,
       loading, 
       totals, 
+      categoryBreakdown,
       dateRange,
       setDateRange,
       globalCategory,
