@@ -29,11 +29,12 @@ const Sidebar = ({ isOpen, onClose }) => {
         <div className="flex flex-col h-full p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-12">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                <Heart className="text-white" size={20} fill="white" />
-              </div>
-              <span className="text-xl font-black text-foreground tracking-tighter uppercase italic">Tracker</span>
+            <div className="flex items-center group">
+              <img 
+                src="/branding/navbar_logo.png" 
+                alt="Wedding Tracker" 
+                className="h-10 w-auto group-hover:scale-105 transition-transform"
+              />
             </div>
             <button onClick={onClose} className="lg:hidden p-2 text-primary/40 hover:text-primary transition-colors">
               <X size={24} />
