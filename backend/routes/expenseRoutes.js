@@ -6,12 +6,12 @@ const auth = require('../middleware/auth');
 // @route   POST api/expenses
 // @desc    Add new expense
 router.post('/', auth, async (req, res) => {
-  const { section, name, category, price, date, description } = req.body;
+  const { event, name, category, price, date, description } = req.body;
 
   try {
     const newExpense = new Expense({
       userId: req.user.id,
-      section,
+      event: event.toLowerCase(),
       name,
       category,
       price,
@@ -39,17 +39,17 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/expenses/section/:section
-// @desc    Get expenses by section
-router.get('/section/:section', auth, async (req, res) => {
+// @route   GET api/expenses/:event
+// @desc    Get expenses by specific event
+router.get('/:event', auth, async (req, res) => {
   try {
     const expenses = await Expense.find({ 
       userId: req.user.id, 
-      section: req.params.section 
+      event: req.params.event.toLowerCase()
     }).sort({ date: -1 });
     res.json(expenses);
   } catch (err) {
-    console.error('❌ GET SECTION EXPENSES ERROR:', err.message);
+    console.error('❌ GET EVENT EXPENSES ERROR:', err.message);
     res.status(500).json({ message: 'Server Error: ' + err.message });
   }
 });
@@ -57,7 +57,7 @@ router.get('/section/:section', auth, async (req, res) => {
 // @route   PUT api/expenses/:id
 // @desc    Update expense
 router.put('/:id', auth, async (req, res) => {
-  const { name, category, price, date, description } = req.body;
+  const { name, category, price, date, description, event } = req.body;
 
   try {
     let expense = await Expense.findById(req.params.id);
@@ -75,6 +75,7 @@ router.put('/:id', auth, async (req, res) => {
     expense.price = price || expense.price;
     expense.date = date || expense.date;
     expense.description = description || expense.description;
+    if (event) expense.event = event.toLowerCase();
 
     await expense.save();
     res.json(expense);

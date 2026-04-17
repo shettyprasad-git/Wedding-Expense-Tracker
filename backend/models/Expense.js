@@ -2,28 +2,20 @@ const mongoose = require('mongoose');
 
 const expenseSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  section: { 
+  event: { 
     type: String, 
     required: true, 
-    enum: ['Engagement', 'Mehndi', 'Marriage', 'Dinner'] 
+    enum: ['engagement', 'mehndi', 'marriage', 'dinner'] 
   },
-  name: { type: String, required: true }, // Changed from title
+  name: { type: String, required: true },
   category: { 
     type: String, 
     required: true, 
-    enum: [
-      'Hall Booking', 
-      'Decorations', 
-      'Catering / Food', 
-      'Photography', 
-      'Makeup / Dressing', 
-      'Travel / Transport', 
-      'Miscellaneous'
-    ] 
+    enum: ['Hall', 'Catering', 'Decoration', 'Travel', 'Misc'] 
   },
-  price: { type: Number, required: true }, // Changed from amount
+  price: { type: Number, required: true },
   date: { type: Date, required: true },
-  description: { type: String }, // Changed from notes
+  description: { type: String },
   createdAt: { type: Date, default: Date.now }
 });
 

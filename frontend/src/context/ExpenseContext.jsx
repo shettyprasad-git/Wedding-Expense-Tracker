@@ -29,6 +29,17 @@ export const ExpenseProvider = ({ children }) => {
     }
   };
 
+  // Dedicated fetch for specific event pages if needed (though global sync is usually better for dash)
+  const fetchEventExpenses = async (eventName) => {
+    try {
+      const res = await api.get(`/expenses/${eventName.toLowerCase()}`);
+      return res.data;
+    } catch (err) {
+      console.error('❌ Failed to fetch event expenses:', err);
+      return [];
+    }
+  };
+
   useEffect(() => {
     fetchExpenses();
   }, [user]);
@@ -71,11 +82,14 @@ export const ExpenseProvider = ({ children }) => {
   }, [expenses, dateRange, globalCategory]);
 
   const totals = useMemo(() => {
-    const sections = ['Engagement', 'Mehndi', 'Marriage', 'Dinner'];
-    const initialTotals = sections.reduce((acc, s) => ({ ...acc, [s]: 0 }), { GrandTotal: 0 });
+    const events = ['engagement', 'mehndi', 'marriage', 'dinner'];
+    const initialTotals = events.reduce((acc, s) => ({ ...acc, [s]: 0 }), { GrandTotal: 0 });
     
     return filteredExpenses.reduce((acc, exp) => {
-      acc[exp.section] = (acc[exp.section] || 0) + (exp.price || 0);
+      const key = exp.event?.toLowerCase();
+      if (acc.hasOwnProperty(key)) {
+        acc[key] += (exp.price || 0);
+      }
       acc.GrandTotal += (exp.price || 0);
       return acc;
     }, initialTotals);
@@ -85,7 +99,7 @@ export const ExpenseProvider = ({ children }) => {
   const exportAllToCSV = () => {
     try {
       const csv = json2csv(filteredExpenses.map(e => ({
-        Section: e.section,
+        Event: e.event,
         Name: e.name,
         Category: e.category,
         Price: e.price,
@@ -104,7 +118,7 @@ export const ExpenseProvider = ({ children }) => {
     try {
       const doc = new jsPDF();
       doc.setFontSize(22);
-      doc.setTextColor(157, 118, 193); // Primary Purple
+      doc.setTextColor(157, 118, 193); 
       doc.text('Wedding Expense Tracker Report', 14, 22);
       
       doc.setFontSize(12);
@@ -112,9 +126,9 @@ export const ExpenseProvider = ({ children }) => {
       doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
       doc.text(`Total Amount: ₹${totals.GrandTotal.toLocaleString()}`, 14, 38);
       
-      const tableColumn = ["Section", "Name", "Category", "Price", "Date"];
+      const tableColumn = ["Event", "Name", "Category", "Price", "Date"];
       const tableRows = filteredExpenses.map(e => [
-        e.section,
+        e.event?.toUpperCase(),
         e.name,
         e.category,
         `Rs. ${e.price.toLocaleString()}`,
@@ -144,7 +158,8 @@ export const ExpenseProvider = ({ children }) => {
       setDateRange,
       globalCategory,
       setGlobalCategory,
-      fetchExpenses, 
+      fetchExpenses,
+      fetchEventExpenses,
       addExpense, 
       updateExpense, 
       deleteExpense,

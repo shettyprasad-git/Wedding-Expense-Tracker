@@ -5,7 +5,7 @@ import { ExpenseProvider } from './context/ExpenseContext';
 import Layout from './components/Layout';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
-import SectionPage from './pages/SectionPage';
+import EventPage from './pages/EventPage';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -13,6 +13,7 @@ const ProtectedRoute = ({ children }) => {
   if (loading) return null;
   if (!user) return <Navigate to="/login" />;
   
+  // Custom layout handling can be done here if sidebar needs to be hidden for specific routes
   return <Layout>{children}</Layout>;
 };
 
@@ -25,13 +26,17 @@ const App = () => {
             <Route path="/login" element={<Auth mode="login" />} />
             <Route path="/signup" element={<Auth mode="signup" />} />
             
-            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/engagement" element={<ProtectedRoute><SectionPage section="Engagement" /></ProtectedRoute>} />
-            <Route path="/mehndi" element={<ProtectedRoute><SectionPage section="Mehndi" /></ProtectedRoute>} />
-            <Route path="/marriage" element={<ProtectedRoute><SectionPage section="Marriage" /></ProtectedRoute>} />
-            <Route path="/dinner" element={<ProtectedRoute><SectionPage section="Dinner" /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             
-            <Route path="*" element={<Navigate to="/" />} />
+            {/* Dedicated Ceremony Routes */}
+            <Route path="/event/engagement" element={<ProtectedRoute><EventPage eventType="engagement" /></ProtectedRoute>} />
+            <Route path="/event/mehndi" element={<ProtectedRoute><EventPage eventType="mehndi" /></ProtectedRoute>} />
+            <Route path="/event/marriage" element={<ProtectedRoute><EventPage eventType="marriage" /></ProtectedRoute>} />
+            <Route path="/event/dinner" element={<ProtectedRoute><EventPage eventType="dinner" /></ProtectedRoute>} />
+            
+            {/* Redirects */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </ExpenseProvider>
       </AuthProvider>
