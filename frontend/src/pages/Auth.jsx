@@ -60,13 +60,11 @@ const Auth = ({ mode }) => {
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
           
           <div className="flex justify-center mb-10">
-            <motion.div 
-              whileHover={{ rotate: 12, scale: 1.1 }}
-              className="w-16 h-16 bg-gradient-to-br from-primary to-secondary-dark rounded-[2rem] flex items-center justify-center shadow-2xl relative"
-            >
-              <div className="absolute inset-0 bg-white/20 blur-xl rounded-full animate-pulse" />
-              <Heart className="text-white relative z-10" size={32} fill="white" />
-            </motion.div>
+            <img 
+              src="/branding/auth_logo.png" 
+              alt="Wedding Tracker Logo" 
+              className="h-24 w-auto drop-shadow-2xl"
+            />
           </div>
 
           <div className="text-center mb-12">

@@ -28,11 +28,12 @@ const Navbar = ({ onMenuClick }) => {
           <div className="w-4 h-0.5 bg-current" />
         </button>
         
-        <Link to="/dashboard" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform">
-            <Heart className="text-white" size={20} fill="white" />
-          </div>
-          <span className="text-xl font-black text-foreground tracking-tighter uppercase italic hidden sm:block">Wedding Tracker</span>
+        <Link to="/dashboard" className="flex items-center group">
+          <img 
+            src="/branding/navbar_logo.png" 
+            alt="Wedding Tracker" 
+            className="h-10 w-auto group-hover:scale-105 transition-transform"
+          />
         </Link>
       </div>
 
