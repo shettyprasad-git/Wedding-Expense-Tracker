@@ -33,7 +33,7 @@ const Sidebar = ({ isOpen, onClose }) => {
               <img 
                 src="/branding/navbar_logo.png" 
                 alt="Wedding Tracker" 
-                className="h-10 w-auto group-hover:scale-105 transition-transform"
+                className="h-14 w-auto group-hover:scale-105 transition-transform"
               />
             </div>
             <button onClick={onClose} className="lg:hidden p-2 text-primary/40 hover:text-primary transition-colors">

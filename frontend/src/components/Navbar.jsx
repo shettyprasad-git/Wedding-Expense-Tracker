@@ -29,11 +29,11 @@ const Navbar = ({ onMenuClick }) => {
         </button>
         
         <Link to="/dashboard" className="flex items-center group">
-          <img 
-            src="/branding/navbar_logo.png" 
-            alt="Wedding Tracker" 
-            className="h-10 w-auto group-hover:scale-105 transition-transform"
-          />
+            <img 
+              src="/branding/navbar_logo.png" 
+              alt="Wedding Tracker" 
+              className="h-14 w-auto group-hover:scale-105 transition-transform"
+            />
         </Link>
       </div>
 
