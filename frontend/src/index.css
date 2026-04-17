@@ -51,6 +51,17 @@ body {
   shadow-xl shadow-primary/20 flex items-center justify-center gap-3 w-full text-lg;
 }
 
+/* Global Number Input Normalization */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 .input-field {
   @apply w-full bg-white/40 border-2 border-primary-light/20 rounded-2xl px-5 py-4 
   focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary/40

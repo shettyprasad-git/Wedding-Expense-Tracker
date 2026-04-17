@@ -69,13 +69,13 @@ const BudgetModal = ({ isOpen, onClose, eventName, currentBudget }) => {
               <label className="text-[10px] font-black text-primary px-1 uppercase tracking-[0.2em] italic">
                 Target Amount (₹)
               </label>
-              <div className="relative group">
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors">
+              <div className="flex items-center gap-3 px-6 py-4 rounded-xl border-2 border-primary-light/20 bg-white/50 focus-within:bg-white focus-within:border-primary/40 focus-within:ring-4 focus-within:ring-primary/10 transition-all group">
+                <div className="text-primary/30 group-focus-within:text-primary transition-colors">
                   <IndianRupee size={20} />
                 </div>
                 <input
                   type="number"
-                  className="input-field pl-16 h-16 bg-white/50 border-white/60 focus:bg-white transition-all text-xl font-black italic"
+                  className="bg-transparent border-none outline-none w-full text-xl font-black italic p-0"
                   placeholder="0.00"
                   value={budget}
                   onChange={(e) => setBudget(e.target.value)}

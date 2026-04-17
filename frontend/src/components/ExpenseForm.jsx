@@ -152,15 +152,17 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-[11px] font-black text-primary/60 px-1 uppercase tracking-[0.2em] italic leading-none">Financial Value (₹)</label>
-              <div className="relative group">
-                <IndianRupee className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/20 group-focus-within:text-primary transition-colors" size={20} />
+              <div className="flex items-center gap-3 px-6 py-4 rounded-xl border-2 border-primary-light/20 bg-white/40 focus-within:bg-white focus-within:border-primary/40 focus-within:ring-4 focus-within:ring-primary/10 transition-all group">
+                <div className="text-primary/20 group-focus-within:text-primary transition-colors">
+                  <IndianRupee size={20} />
+                </div>
                 <input
                   type="number"
                   name="price"
                   value={formData.price}
                   onChange={handleChange}
                   placeholder="0.00"
-                  className="input-field w-full pl-14 bg-white/40 focus:bg-white font-black text-xl tracking-tighter italic"
+                  className="bg-transparent border-none outline-none w-full font-black text-xl tracking-tighter italic p-0"
                   required
                 />
               </div>
