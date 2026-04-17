@@ -79,60 +79,51 @@ const Auth = ({ mode }) => {
           </div>
 
           {/* REBUILT FORM: Explicit Flex Column with forced gaps */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-y-8">
+          <form onSubmit={handleSubmit} className="flex flex-col space-y-6">
             <AnimatePresence mode="popLayout">
               {!isLogin && (
                 <motion.div
                   key="signup-name"
-                  initial={{ opacity: 0, y: -20 }}
+                  initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="flex flex-col"
+                  exit={{ opacity: 0, y: -10 }}
+                  className="flex flex-col gap-2"
                 >
-                  <label className="block text-[11px] font-black text-primary mb-2.5 ml-2 uppercase tracking-[0.2em] italic">Partner / Planner Name</label>
-                  <div className="relative group">
-                    <UserIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
-                    <input
-                      type="text"
-                      className="input-field w-full pl-16 bg-white/50 border-white/60 focus:bg-white"
-                      placeholder="Enter full name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required={!isLogin}
-                    />
-                  </div>
+                  <label className="text-[11px] font-black text-primary px-1 uppercase tracking-[0.2em] italic">Partner / Planner Name</label>
+                  <input
+                    type="text"
+                    className="input-field w-full bg-white/50 border-white/60 focus:bg-white px-5 py-4"
+                    placeholder="Enter full name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required={!isLogin}
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div className="flex flex-col">
-              <label className="block text-[11px] font-black text-primary mb-2.5 ml-2 uppercase tracking-[0.2em] italic">Email Address</label>
-              <div className="relative group">
-                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
-                <input
-                  type="email"
-                  className="input-field w-full pl-16 bg-white/50 border-white/60 focus:bg-white"
-                  placeholder="bride_groom@example.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                />
-              </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-black text-primary px-1 uppercase tracking-[0.2em] italic">Email Address</label>
+              <input
+                type="email"
+                className="input-field w-full bg-white/50 border-white/60 focus:bg-white px-5 py-4"
+                placeholder="bride_groom@example.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
             </div>
 
-            <div className="flex flex-col">
-              <label className="block text-[11px] font-black text-primary mb-2.5 ml-2 uppercase tracking-[0.2em] italic">Secret Key / Password</label>
-              <div className="relative group">
-                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
-                <input
-                  type="password"
-                  className="input-field w-full pl-16 bg-white/50 border-white/60 focus:bg-white"
-                  placeholder="Enter password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  required
-                />
-              </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-black text-primary px-1 uppercase tracking-[0.2em] italic">Secret Key / Password</label>
+              <input
+                type="password"
+                className="input-field w-full bg-white/50 border-white/60 focus:bg-white px-5 py-4"
+                placeholder="Enter password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
+              />
             </div>
 
             {error && (

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const auth = require('../middleware/auth');
+const auth = require('../middleware/auth').auth;
 
 // @route   POST api/auth/signup
 // @desc    Register user
@@ -90,7 +90,7 @@ router.put('/profile', auth, async (req, res) => {
 
     if (name) user.name = name;
     if (phone !== undefined) user.phone = phone;
-    if (role) user.role = role;
+    if (role) user.weddingRole = role; // Map former profile 'role' to weddingRole
     if (profileImage !== undefined) user.profileImage = profileImage;
 
     await user.save();

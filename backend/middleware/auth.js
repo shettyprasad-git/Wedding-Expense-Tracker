@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
   const token = req.header('x-auth-token');
 
   if (!token) {
@@ -15,3 +16,17 @@ module.exports = (req, res, next) => {
     res.status(401).json({ message: 'Token is not valid' });
   }
 };
+
+const admin = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admin only.' });
+    }
+    next();
+  } catch (err) {
+    res.status(500).json({ message: 'Server error during role verification' });
+  }
+};
+
+module.exports = { auth, admin };

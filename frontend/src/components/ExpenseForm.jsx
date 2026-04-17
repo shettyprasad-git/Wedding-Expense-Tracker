@@ -92,58 +92,47 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-10">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name Field */}
-          <div className="flex flex-col">
-            <label className="block text-[11px] font-black text-primary/60 ml-3 mb-3 uppercase tracking-[0.2em] italic leading-none">Finance Item Description</label>
-            <div className="relative group">
-              <Tag className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="e.g., Guest House Accommodation"
-                className="input-field pl-16 h-16 bg-white/40 focus:bg-white"
-                required
-              />
-            </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-black text-primary/60 px-1 uppercase tracking-[0.2em] italic leading-none">Finance Item Description</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="e.g., Guest House Accommodation"
+              className="input-field w-full bg-white/40 focus:bg-white px-5 py-4"
+              required
+            />
           </div>
 
           {/* Category & Price Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="flex flex-col">
-              <label className="block text-[11px] font-black text-primary/60 ml-3 mb-3 uppercase tracking-[0.2em] italic leading-none">Internal Category</label>
-              <div className="relative">
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="input-field shadow-sm appearance-none cursor-pointer h-16 bg-white/40 focus:bg-white"
-                >
-                  {categories.map(cat => (
-                    <option key={cat} value={cat} className="text-foreground">{cat} Management</option>
-                  ))}
-                </select>
-                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-20">
-                   <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-foreground" />
-                </div>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-black text-primary/60 px-1 uppercase tracking-[0.2em] italic leading-none">Internal Category</label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="input-field w-full appearance-none cursor-pointer bg-white/40 focus:bg-white px-5 py-4"
+              >
+                {categories.map(cat => (
+                  <option key={cat} value={cat} className="text-foreground">{cat} Management</option>
+                ))}
+              </select>
             </div>
-            <div className="flex flex-col">
-              <label className="block text-[11px] font-black text-primary/60 ml-3 mb-3 uppercase tracking-[0.2em] italic leading-none">Investment Amount (₹)</label>
-              <div className="relative group">
-                <IndianRupee className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
-                <input
-                  type="number"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  placeholder="0.00"
-                  className="input-field pl-16 h-16 bg-white/40 focus:bg-white italic font-black text-xl tracking-tighter"
-                  required
-                />
-              </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-black text-primary/60 px-1 uppercase tracking-[0.2em] italic leading-none">Investment Amount (₹)</label>
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                placeholder="0.00"
+                className="input-field w-full bg-white/40 focus:bg-white px-5 py-4 italic font-black text-xl tracking-tighter"
+                required
+              />
             </div>
           </div>
 
@@ -151,60 +140,48 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
           <AnimatePresence mode="popLayout">
             {isOther && (
               <motion.div 
-                initial={{ opacity: 0, y: -20, height: 0 }}
+                initial={{ opacity: 0, y: -10, height: 0 }}
                 animate={{ opacity: 1, y: 0, height: 'auto' }}
-                exit={{ opacity: 0, y: -20, height: 0 }}
-                className="flex flex-col overflow-hidden"
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                className="flex flex-col gap-2 overflow-hidden"
               >
-                <label className="block text-[11px] font-black text-secondary ml-3 mb-3 uppercase tracking-[0.2em] italic leading-none">Defined Manual Category</label>
-                <div className="relative group">
-                  <PlusCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary/30 group-focus-within:text-secondary transition-colors" size={20} />
-                  <input
-                    type="text"
-                    value={manualCategory}
-                    onChange={(e) => setManualCategory(e.target.value)}
-                    placeholder="e.g., Photography, Jewelry..."
-                    className="input-field pl-16 h-16 border-secondary/20 focus:ring-secondary/20 focus:border-secondary/40 bg-white/40 focus:bg-white"
-                    required
-                  />
-                </div>
+                <label className="text-[11px] font-black text-secondary px-1 uppercase tracking-[0.2em] italic leading-none">Defined Manual Category</label>
+                <input
+                  type="text"
+                  value={manualCategory}
+                  onChange={(e) => setManualCategory(e.target.value)}
+                  placeholder="e.g., Photography, Jewelry..."
+                  className="input-field w-full border-secondary/20 focus:ring-secondary/20 focus:border-secondary/40 bg-white/40 focus:bg-white px-5 py-4"
+                  required
+                />
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Date & Additional Row */}
-          <div className="flex flex-col">
-            <label className="block text-[11px] font-black text-primary/60 ml-3 mb-3 uppercase tracking-[0.2em] italic leading-none">Effective Transaction Date</label>
-            <div 
-              className="relative group cursor-pointer"
-              onClick={() => dateInputRef.current?.showPicker()}
-            >
-              <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
-              <input
-                type="date"
-                name="date"
-                ref={dateInputRef}
-                value={formData.date}
-                onChange={handleChange}
-                className="input-field pl-16 cursor-pointer h-16 bg-white/40 focus:bg-white uppercase text-xs font-black tracking-widest italic"
-                required
-              />
-            </div>
+          {/* Date Field */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-black text-primary/60 px-1 uppercase tracking-[0.2em] italic leading-none">Effective Transaction Date</label>
+            <input
+              type="date"
+              name="date"
+              ref={dateInputRef}
+              value={formData.date}
+              onChange={handleChange}
+              className="input-field w-full cursor-pointer bg-white/40 focus:bg-white uppercase text-xs font-black tracking-widest italic px-5 py-4"
+              required
+            />
           </div>
 
           {/* Description Field */}
-          <div className="flex flex-col">
-            <label className="block text-[11px] font-black text-primary/60 ml-3 mb-3 uppercase tracking-[0.2em] italic leading-none">Internal Transaction Notes</label>
-            <div className="relative group">
-              <AlignLeft className="absolute left-6 top-6 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Include payment milestones, vendor contact or specific booking details..."
-                className="input-field pl-16 h-32 resize-none pt-6 bg-white/40 focus:bg-white text-xs font-medium italic"
-              />
-            </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-black text-primary/60 px-1 uppercase tracking-[0.2em] italic leading-none">Internal Transaction Notes</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Include payment milestones, vendor contact details..."
+              className="input-field w-full h-32 resize-none bg-white/40 focus:bg-white text-xs font-medium italic px-5 py-6"
+            />
           </div>
 
           {/* SaaS Actions */}

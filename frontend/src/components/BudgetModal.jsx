@@ -56,23 +56,25 @@ const BudgetModal = ({ isOpen, onClose, onSave, currentBudgets }) => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           {categories.map((cat) => (
-            <div key={cat.name} className="flex flex-col bg-white/40 p-6 rounded-[2rem] border border-white/60 hover:bg-white transition-all shadow-inner group">
-              <div className="flex items-center gap-3 mb-4">
+            <div key={cat.name} className="flex flex-col gap-3 bg-white/40 p-6 rounded-[2rem] border border-white/60 hover:bg-white transition-all shadow-inner group">
+              <div className="flex items-center gap-3">
                 <cat.icon className={`${cat.color} group-hover:scale-110 transition-transform`} size={18} />
                 <label className="text-[11px] font-black uppercase tracking-widest text-primary italic leading-none">{cat.name} Portfolio</label>
               </div>
-              <div className="relative">
-                <IndianRupee className="absolute left-0 top-1/2 -translate-y-1/2 text-primary/20" size={24} />
-                <input
-                  type="number"
-                  name={cat.name}
-                  value={budgets[cat.name]}
-                  onChange={handleChange}
-                  className="w-full bg-transparent pl-10 pr-4 py-2 text-3xl font-black text-foreground tracking-tighter focus:outline-none placeholder:text-primary/10 italic"
-                  placeholder="0"
-                />
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-black text-primary/20 italic">₹</span>
+                  <input
+                    type="number"
+                    name={cat.name}
+                    value={budgets[cat.name]}
+                    onChange={handleChange}
+                    className="w-full bg-transparent p-0 text-3xl font-black text-foreground tracking-tighter focus:outline-none placeholder:text-primary/10 italic"
+                    placeholder="0"
+                  />
+                </div>
               </div>
             </div>
           ))}

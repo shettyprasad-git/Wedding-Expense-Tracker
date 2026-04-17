@@ -8,14 +8,27 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+
+  const fetchNotifications = async () => {
+    try {
+      if (localStorage.getItem('token')) {
+        const res = await api.get('/notifications');
+        setNotifications(res.data);
+      }
+    } catch (err) {
+      console.error('❌ Fetch Notifications Error:', err);
+    }
+  };
 
   const loadUser = async () => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const res = await api.get('/auth/user');
-        // This now includes budgets, phone, role, profileImage from backend
+        // This now includes budgets, phone, role, weddingRole, profileImage
         setUser(res.data);
+        await fetchNotifications();
       } catch (err) {
         localStorage.removeItem('token');
         setUser(null);
@@ -26,13 +39,15 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     loadUser();
+    // Poll for notifications every 2 mins
+    const interval = setInterval(fetchNotifications, 120000);
+    return () => clearInterval(interval);
   }, []);
 
   const signup = async (userData) => {
     const res = await api.post('/auth/signup', userData);
     localStorage.setItem('token', res.data.token);
     setUser(res.data.user);
-    // Refresh to get full schema including budgets/role etc
     await loadUser();
     return res.data;
   };
@@ -41,7 +56,6 @@ export const AuthProvider = ({ children }) => {
     const res = await api.post('/auth/login', { email, password });
     localStorage.setItem('token', res.data.token);
     setUser(res.data.user);
-    // Refresh to get full schema
     await loadUser();
     return res.data;
   };
@@ -49,12 +63,12 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
+    setNotifications([]);
   };
 
   const updateProfile = async (profileData) => {
     try {
       const res = await api.put('/auth/profile', profileData);
-      // Backend returns full user object or profile fields
       setUser(prev => ({ ...prev, ...res.data }));
       return res.data;
     } catch (err) {
@@ -78,12 +92,14 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{ 
       user, 
       loading, 
+      notifications,
       signup, 
       login, 
       logout, 
       updateProfile, 
       updateBudgets, 
-      refreshUser: loadUser 
+      refreshUser: loadUser,
+      fetchNotifications 
     }}>
       {children}
     </AuthContext.Provider>
