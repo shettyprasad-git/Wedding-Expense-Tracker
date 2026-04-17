@@ -30,8 +30,8 @@ router.post('/signup', async (req, res) => {
       }
     );
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('❌ SIGNUP ERROR:', err.message);
+    res.status(500).json({ message: 'Server Error: ' + err.message });
   }
 });
 
@@ -63,8 +63,8 @@ router.post('/login', async (req, res) => {
       }
     );
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('❌ LOGIN ERROR:', err.message);
+    res.status(500).json({ message: 'Server Error: ' + err.message });
   }
 });
 
@@ -75,8 +75,8 @@ router.get('/user', auth, async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
     res.json(user);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('❌ GET USER ERROR:', err.message);
+    res.status(500).json({ message: 'Server Error: ' + err.message });
   }
 });
 

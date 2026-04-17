@@ -74,23 +74,23 @@ const Auth = () => {
         transition={{ duration: 0.8, ease: "backOut" }}
         className="w-full max-w-md z-10"
       >
-        <div className="auth-glass p-8 md:p-10 rounded-[2.5rem] relative">
-          <div className="flex justify-center mb-8">
+        <div className="auth-glass p-8 md:p-12 rounded-[2.5rem] relative">
+          <div className="flex justify-center mb-10">
             <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 transform -rotate-6">
               <Heart className="text-white" size={32} fill="white" />
             </div>
           </div>
 
-          <div className="text-center mb-10">
-            <h1 className="text-3xl font-display font-bold text-foreground mb-2">
+          <div className="text-center mb-12">
+            <h1 className="text-3xl font-display font-bold text-foreground mb-3">
               {isLogin ? 'Welcome Back!' : 'Start Your Journey'}
             </h1>
-            <p className="text-foreground/60">
+            <p className="text-foreground/60 text-sm">
               {isLogin ? 'Login to manage your special day expenses.' : 'Create an account to track your wedding budget.'}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-10">
             <AnimatePresence mode="wait">
               {!isLogin && (
                 <motion.div
@@ -98,9 +98,9 @@ const Auth = () => {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="space-y-2"
+                  className="flex flex-col"
                 >
-                  <label className="block text-sm font-bold text-foreground/70 ml-1 font-sans mb-1.5">Full Name</label>
+                  <label className="block text-sm font-black text-primary/70 ml-1 mb-2 tracking-tight uppercase">Full Name</label>
                   <div className="relative">
                     <input
                       type="text"
@@ -115,8 +115,8 @@ const Auth = () => {
               )}
             </AnimatePresence>
 
-            <div className="space-y-2">
-              <label className="block text-sm font-bold text-foreground/70 ml-1 font-sans mb-1.5">Email Address</label>
+            <div className="flex flex-col">
+              <label className="block text-sm font-black text-primary/70 ml-1 mb-2 tracking-tight uppercase">Email Address</label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" size={20} />
                 <input
@@ -130,8 +130,8 @@ const Auth = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="block text-sm font-bold text-foreground/70 ml-1 font-sans mb-1.5">Password</label>
+            <div className="flex flex-col">
+              <label className="block text-sm font-black text-primary/70 ml-1 mb-2 tracking-tight uppercase">Password</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" size={20} />
                 <input
@@ -149,7 +149,7 @@ const Auth = () => {
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-red-50/50 text-red-600 p-3 rounded-xl text-sm font-medium border border-red-100 flex items-center justify-center gap-2"
+                className="bg-red-50/80 text-red-600 p-4 rounded-xl text-xs font-black border border-red-100 flex items-center justify-center gap-2 text-center"
               >
                 {error}
               </motion.div>
