@@ -74,23 +74,26 @@ const Auth = () => {
         transition={{ duration: 0.8, ease: "backOut" }}
         className="w-full max-w-md z-10"
       >
-        <div className="auth-glass p-8 md:p-12 rounded-[2.5rem] relative">
+        <div className="auth-glass relative overflow-hidden">
+          {/* Internal Glow */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+          
           <div className="flex justify-center mb-10">
             <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 transform -rotate-6">
               <Heart className="text-white" size={32} fill="white" />
             </div>
           </div>
 
-          <div className="text-center mb-12">
-            <h1 className="text-3xl font-display font-bold text-foreground mb-3">
-              {isLogin ? 'Welcome Back!' : 'Start Your Journey'}
+          <div className="text-center mb-10">
+            <h1 className="text-4xl font-display font-bold text-foreground mb-3 tracking-tight">
+              {isLogin ? 'Welcome Back' : 'Join the Celebration'}
             </h1>
-            <p className="text-foreground/60 text-sm">
-              {isLogin ? 'Login to manage your special day expenses.' : 'Create an account to track your wedding budget.'}
+            <p className="text-foreground/50 text-sm font-medium">
+              {isLogin ? 'Manage your wedding with elegance.' : 'Step into a world of organized planning.'}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-10">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <AnimatePresence mode="wait">
               {!isLogin && (
                 <motion.div
@@ -100,12 +103,12 @@ const Auth = () => {
                   exit={{ opacity: 0, height: 0 }}
                   className="flex flex-col"
                 >
-                  <label className="block text-sm font-black text-primary/70 ml-1 mb-2 tracking-tight uppercase">Full Name</label>
-                  <div className="relative">
+                  <label className="block text-xs font-black text-primary/80 ml-2 mb-2 uppercase tracking-[0.2em]">Partner Name</label>
+                  <div className="relative group">
                     <input
                       type="text"
                       className="input-field"
-                      placeholder="Enter your name"
+                      placeholder="Enter full name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required={!isLogin}
@@ -116,13 +119,13 @@ const Auth = () => {
             </AnimatePresence>
 
             <div className="flex flex-col">
-              <label className="block text-sm font-black text-primary/70 ml-1 mb-2 tracking-tight uppercase">Email Address</label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" size={20} />
+              <label className="block text-xs font-black text-primary/80 ml-2 mb-2 uppercase tracking-[0.2em]">Email Address</label>
+              <div className="relative group">
+                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
                 <input
                   type="email"
-                  className="input-field pl-12"
-                  placeholder="name@example.com"
+                  className="input-field pl-14"
+                  placeholder="bride_groom@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
@@ -131,12 +134,12 @@ const Auth = () => {
             </div>
 
             <div className="flex flex-col">
-              <label className="block text-sm font-black text-primary/70 ml-1 mb-2 tracking-tight uppercase">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" size={20} />
+              <label className="block text-xs font-black text-primary/80 ml-2 mb-2 uppercase tracking-[0.2em]">Secret Key</label>
+              <div className="relative group">
+                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
                 <input
                   type="password"
-                  className="input-field pl-12"
+                  className="input-field pl-14"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -149,7 +152,7 @@ const Auth = () => {
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-red-50/80 text-red-600 p-4 rounded-xl text-xs font-black border border-red-100 flex items-center justify-center gap-2 text-center"
+                className="bg-red-500/10 text-red-600 p-4 rounded-2xl text-[10px] font-black border border-red-500/20 flex items-center justify-center gap-2 text-center uppercase tracking-widest"
               >
                 {error}
               </motion.div>
@@ -158,27 +161,27 @@ const Auth = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="btn-primary w-full py-4 text-lg"
+              className="btn-primary"
             >
               {isLoading ? (
-                <Loader2 className="animate-spin" size={24} />
+                <Loader2 className="animate-spin" size={28} />
               ) : (
                 <>
-                  {isLogin ? 'Sign In' : 'Create Account'}
+                  <span className="tracking-widest uppercase">{isLogin ? 'Sign In' : 'Create Account'}</span>
                   <ArrowRight size={20} />
                 </>
               )}
             </button>
           </form>
 
-          <div className="mt-10 text-center">
+          <div className="mt-12 text-center">
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="group text-foreground/60 hover:text-primary transition-colors duration-200 text-sm font-sans"
+              className="group text-foreground/40 hover:text-primary transition-all duration-300 text-xs font-black uppercase tracking-[0.1em]"
             >
-              {isLogin ? "New to Wedding Tracker?" : "Already prepared?"}{' '}
-              <span className="font-bold text-primary group-hover:underline decoration-2">
-                {isLogin ? 'Sign Up Now' : 'Login Here'}
+              {isLogin ? "New to the Tracker?" : "Already joined?"}{' '}
+              <span className="text-primary group-hover:underline underline-offset-4 decoration-2">
+                {isLogin ? 'Register Here' : 'Log In Instead'}
               </span>
             </button>
           </div>

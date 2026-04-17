@@ -38,27 +38,23 @@ body {
 }
 
 .glass-card {
-  @apply bg-card/70 backdrop-blur-xl border border-white/40 rounded-[2rem] shadow-2xl;
+  @apply bg-white/20 backdrop-blur-lg border border-white/40 rounded-2xl shadow-xl;
 }
 
 .auth-glass {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(157, 118, 193, 0.15);
+  @apply bg-white/20 backdrop-blur-lg border border-white/40 rounded-2xl shadow-xl p-8 md:p-12 relative;
 }
 
 .btn-primary {
-  @apply bg-primary text-white font-medium px-6 py-2.5 rounded-xl 
-  hover:bg-primary-dark transition-all duration-300 transform hover:-translate-y-0.5
-  shadow-md hover:shadow-lg flex items-center justify-center gap-2;
+  @apply bg-primary text-white font-black px-6 py-3.5 rounded-2xl 
+  hover:bg-primary-dark transition-all duration-300 transform hover:-translate-y-1 active:scale-95
+  shadow-xl shadow-primary/20 flex items-center justify-center gap-3 w-full text-lg;
 }
 
 .input-field {
-  @apply w-full bg-white/60 border border-primary-light/30 rounded-xl px-4 py-3 
-  focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200
-  placeholder:text-foreground/40;
+  @apply w-full bg-white/40 border-2 border-primary-light/20 rounded-2xl px-5 py-4 
+  focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary/40
+  transition-all duration-300 text-lg font-medium placeholder:text-foreground/30;
 }
 
 .sidebar-link-active {
