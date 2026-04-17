@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Save, IndianRupee, Calendar, Tag, AlignLeft } from 'lucide-react';
+import { X, Save, IndianRupee, Calendar, Tag, AlignLeft, PlusCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) => {
@@ -12,21 +12,30 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
     event: forcedEvent || 'marriage'
   });
 
+  const [manualCategory, setManualCategory] = useState('');
+  const [isOther, setIsOther] = useState(false);
   const dateInputRef = useRef(null);
 
-  // Strictly align with the latest user requirement
-  const categories = ['Hall', 'Catering', 'Decoration', 'Travel', 'Misc'];
+  const categories = ['Hall', 'Catering', 'Decoration', 'Travel', 'Misc', 'Other'];
 
   useEffect(() => {
     if (initialData) {
+      const isCustom = !['Hall', 'Catering', 'Decoration', 'Travel', 'Misc'].includes(initialData.category);
       setFormData({
         name: initialData.name || '',
-        category: initialData.category || 'Catering',
+        category: isCustom ? 'Other' : (initialData.category || 'Catering'),
         price: initialData.price || '',
         date: initialData.date ? new Date(initialData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
         description: initialData.description || '',
         event: initialData.event || forcedEvent || 'marriage'
       });
+      if (isCustom) {
+        setManualCategory(initialData.category);
+        setIsOther(true);
+      } else {
+        setManualCategory('');
+        setIsOther(false);
+      }
     } else {
       setFormData({
         name: '',
@@ -36,16 +45,26 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
         description: '',
         event: forcedEvent || 'marriage'
       });
+      setManualCategory('');
+      setIsOther(false);
     }
   }, [initialData, isOpen, forcedEvent]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === 'category') {
+      setIsOther(value === 'Other');
+    }
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    const finalData = {
+      ...formData,
+      category: isOther ? manualCategory : formData.category
+    };
+    onSubmit(finalData);
   };
 
   if (!isOpen) return null;
@@ -70,6 +89,7 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Name Field */}
           <div className="flex flex-col">
             <label className="block text-[10px] font-black text-primary/70 ml-2 mb-2 uppercase tracking-[0.2em]">Item Name</label>
             <div className="relative group">
@@ -86,6 +106,7 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
             </div>
           </div>
 
+          {/* Category & Price Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="flex flex-col">
               <label className="block text-[10px] font-black text-primary/70 ml-2 mb-2 uppercase tracking-[0.2em]">Category</label>
@@ -118,6 +139,32 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
             </div>
           </div>
 
+          {/* Conditional Manual Category Input */}
+          <AnimatePresence mode="popLayout">
+            {isOther && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0, y: -10 }}
+                animate={{ opacity: 1, height: 'auto', y: 0 }}
+                exit={{ opacity: 0, height: 0, y: -10 }}
+                className="flex flex-col"
+              >
+                <label className="block text-[10px] font-black text-secondary ml-2 mb-2 uppercase tracking-[0.2em]">Custom Category Name</label>
+                <div className="relative group">
+                  <PlusCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary/30 group-focus-within:text-secondary transition-colors" size={20} />
+                  <input
+                    type="text"
+                    value={manualCategory}
+                    onChange={(e) => setManualCategory(e.target.value)}
+                    placeholder="e.g., Photography, Jewelry..."
+                    className="input-field pl-16 h-14 border-secondary/20 focus:ring-secondary/20 focus:border-secondary/40"
+                    required
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Date Field */}
           <div className="flex flex-col">
             <label className="block text-[10px] font-black text-primary/70 ml-2 mb-2 uppercase tracking-[0.2em]">Date of Expense</label>
             <div 
@@ -137,6 +184,7 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
             </div>
           </div>
 
+          {/* Description Field */}
           <div className="flex flex-col">
             <label className="block text-[10px] font-black text-primary/70 ml-2 mb-2 uppercase tracking-[0.2em]">Brief Description</label>
             <div className="relative group">
@@ -151,6 +199,7 @@ const ExpenseForm = ({ isOpen, onClose, onSubmit, initialData, forcedEvent }) =>
             </div>
           </div>
 
+          {/* Actions */}
           <div className="flex gap-4 pt-6">
             <button
               type="button"

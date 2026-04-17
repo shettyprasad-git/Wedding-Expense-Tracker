@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Mail, Lock, Heart, ArrowRight, Loader2, Sparkles } from 'lucide-react';
+import { Mail, Lock, Heart, ArrowRight, Loader2, User as UserIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Auth = () => {
@@ -27,7 +27,7 @@ const Auth = () => {
       } else {
         await signup(formData);
       }
-      navigate('/');
+      navigate('/dashboard'); // Correct route based on latest overhaul
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Something went wrong');
     } finally {
@@ -36,53 +36,60 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden font-sans">
+    <div className="min-h-screen w-full flex items-center justify-center p-6 relative overflow-hidden font-sans bg-soft-gradient">
+      {/* Dynamic Background */}
       <div 
         className="absolute inset-0 bg-wedding-bg bg-cover bg-center z-0 scale-105"
         style={{ filter: 'brightness(0.9) saturate(1.1)' }}
       />
-      <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-secondary/10 z-0 pointer-events-none" />
+      <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px] z-0" />
+      <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-secondary/10 z-0 pointer-events-none" />
 
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "backOut" }}
-        className="w-full max-w-md z-10"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8 }}
+        className="w-full max-w-lg z-10"
       >
-        <div className="auth-glass relative overflow-hidden p-8 md:p-12">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+        <div className="auth-glass relative overflow-hidden p-10 md:p-14 border-white/60 shadow-[0_32px_120px_-15px_rgba(45,27,77,0.3)]">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
           
-          <div className="flex justify-center mb-8">
-            <div className="w-14 h-14 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center shadow-lg transform -rotate-6">
-              <Heart className="text-white" size={28} fill="white" />
-            </div>
+          <div className="flex justify-center mb-10">
+            <motion.div 
+              whileHover={{ rotate: 12, scale: 1.1 }}
+              className="w-16 h-16 bg-gradient-to-br from-primary to-secondary-dark rounded-[2rem] flex items-center justify-center shadow-2xl relative"
+            >
+              <div className="absolute inset-0 bg-white/20 blur-xl rounded-full animate-pulse" />
+              <Heart className="text-white relative z-10" size={32} fill="white" />
+            </motion.div>
           </div>
 
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-black text-foreground mb-2 tracking-tight uppercase">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-black text-foreground mb-3 tracking-tighter uppercase italic">
               {isLogin ? 'Sign In' : 'Sign Up'}
             </h1>
-            <p className="text-foreground/40 text-[10px] font-black uppercase tracking-widest italic">
-              {isLogin ? 'Manage your wedding budget' : 'Start your wedding planning'}
+            <p className="text-primary/60 text-[10px] font-black uppercase tracking-[0.3em] italic">
+              {isLogin ? 'Manage your wedding investment' : 'Start your wedding planning'}
             </p>
           </div>
 
-          {/* Spacing Fix: Using space-y-4 for the form container */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <AnimatePresence mode="wait">
+          {/* REBUILT FORM: Explicit Flex Column with forced gaps */}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-y-8">
+            <AnimatePresence mode="popLayout">
               {!isLogin && (
                 <motion.div
                   key="signup-name"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-1.5"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="flex flex-col"
                 >
-                  <label className="block text-[10px] font-black text-primary/70 ml-2 uppercase tracking-[0.2em]">Partner Name</label>
+                  <label className="block text-[11px] font-black text-primary mb-2.5 ml-2 uppercase tracking-[0.2em] italic">Partner / Planner Name</label>
                   <div className="relative group">
+                    <UserIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
                     <input
                       type="text"
-                      className="input-field w-full p-4 mt-1"
+                      className="input-field w-full pl-16 bg-white/50 border-white/60 focus:bg-white"
                       placeholder="Enter full name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -93,13 +100,13 @@ const Auth = () => {
               )}
             </AnimatePresence>
 
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-black text-primary/70 ml-2 uppercase tracking-[0.2em]">Email Address</label>
+            <div className="flex flex-col">
+              <label className="block text-[11px] font-black text-primary mb-2.5 ml-2 uppercase tracking-[0.2em] italic">Email Address</label>
               <div className="relative group">
-                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={18} />
+                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
                 <input
                   type="email"
-                  className="input-field w-full pl-14 p-4 mt-1"
+                  className="input-field w-full pl-16 bg-white/50 border-white/60 focus:bg-white"
                   placeholder="bride_groom@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -108,14 +115,14 @@ const Auth = () => {
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-black text-primary/70 ml-2 uppercase tracking-[0.2em]">Password</label>
+            <div className="flex flex-col">
+              <label className="block text-[11px] font-black text-primary mb-2.5 ml-2 uppercase tracking-[0.2em] italic">Secret Key / Password</label>
               <div className="relative group">
-                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={18} />
+                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-primary/30 group-focus-within:text-primary transition-colors" size={20} />
                 <input
                   type="password"
-                  className="input-field w-full pl-14 p-4 mt-1"
-                  placeholder="Enter secret key"
+                  className="input-field w-full pl-16 bg-white/50 border-white/60 focus:bg-white"
+                  placeholder="Enter password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
@@ -125,9 +132,9 @@ const Auth = () => {
 
             {error && (
               <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-red-500/10 text-red-600 p-4 rounded-2xl text-[10px] font-black border border-red-500/20 text-center uppercase tracking-widest italic"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-red-500/10 text-red-600 p-5 rounded-3xl text-[10px] font-black border border-red-500/20 text-center uppercase tracking-widest italic shadow-inner"
               >
                 {error}
               </motion.div>
@@ -136,23 +143,26 @@ const Auth = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="btn-primary w-full p-4 mt-4"
+              className="btn-primary w-full py-5 rounded-[2rem] shadow-2xl shadow-primary/30 mt-4 h-16 relative overflow-hidden group"
             >
+              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
               {isLoading ? (
-                <Loader2 className="animate-spin mx-auto" size={24} />
+                <Loader2 className="animate-spin mx-auto text-white" size={28} />
               ) : (
-                <span className="tracking-widest uppercase font-black">{isLogin ? 'Sign In' : 'Create Account'}</span>
+                <span className="relative z-10 tracking-[0.3em] ml-1 uppercase font-black text-sm">
+                  {isLogin ? 'Sign In Center' : 'Create Account'}
+                </span>
               )}
             </button>
           </form>
 
-          <div className="mt-8 text-center">
+          <div className="mt-12 text-center">
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="group text-foreground/40 hover:text-primary transition-all duration-300 text-[10px] font-black uppercase tracking-[0.2em]"
+              className="group text-foreground/40 hover:text-primary transition-all duration-300 text-[10px] font-black uppercase tracking-[0.2em] italic"
             >
-              {isLogin ? "New to the Tracker?" : "Already joined?"}{' '}
-              <span className="text-primary group-hover:underline underline-offset-4 decoration-2">
+              {isLogin ? "New to the hub?" : "Already a planner?"}{' '}
+              <span className="text-primary group-hover:underline underline-offset-8 decoration-2 ml-1">
                 {isLogin ? 'Register Here' : 'Log In Instead'}
               </span>
             </button>
