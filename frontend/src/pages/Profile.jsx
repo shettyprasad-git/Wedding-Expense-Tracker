@@ -293,11 +293,17 @@ const Profile = () => {
                             value={formData.role}
                             onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                           >
-                            <option value="Planner">Managing Planner</option>
-                            <option value="Brother">Brother of Couple</option>
-                            <option value="Sister">Sister of Couple</option>
-                            <option value="Associate">Wedding Associate</option>
-                            <option value="Other">External Partner</option>
+                            <optgroup label="👰 Family" className="text-primary/40 font-black uppercase text-[10px] tracking-widest bg-white">
+                              <option value="Bride">Bride</option>
+                              <option value="Groom">Groom</option>
+                              <option value="Brother">Brother of Couple</option>
+                              <option value="Sister">Sister of Couple</option>
+                            </optgroup>
+                            <optgroup label="🧑💼 Professionals" className="text-primary/40 font-black uppercase text-[10px] tracking-widest bg-white">
+                              <option value="Planner">Managing Planner</option>
+                              <option value="Associate">Wedding Associate</option>
+                              <option value="Other">External Partner</option>
+                            </optgroup>
                           </select>
                        </div>
                      </div>
